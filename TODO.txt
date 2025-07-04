@@ -12,19 +12,21 @@ Goal:
     Auth / DB Integration / Rate Limiting / Email Verification / Password Reset / input validation/sanitization
     Payments? Free Tier Usage etc.
 
-
 Pages:
-- Notes / Goals / To Do / Dev Log (Auto grabs your completed tasks from the to do and puts into a dev log format)
-- Framework / Roadmap Plan from inception to Deployment and beyond / Stack
-- Docs / API planning etc 
-- Settings ( Delete / Archive(or make current) / Color / Category /  )
-- Info ( Staging / Links / Analytics / Cronjobs / more )
+- Notes [Markdown] / Goals / To Do / Dev Log | All of these as collapsible sections
+- Roadmap - Plan from inception to Deployment and beyond / Stack
+- Docs / API planning etc [Make this editable, keep the sections we can add those fields to the project schema ],
+- Settings / Info ( Staging [ENUM] / Links ["Add" box for seperate links] / Color / Category )
 
-Side Bar:
-- Section Headers of "Current" vs "Old" maybe more?
-- Search bar for projects
-- Filter / sorting
-- Project names to pull up those projects into your main view, then using the top nav bar to control what you see
-
-Header/Nav Bar(Clicking these tabs bring up these things):
-- Cronjobs / Analytics
+Future Features (Claude ignore for now)
+Search bar on side bar for projects / Filter / sorting
+Cronjobs/Analytics
+Staging Enum -> Options
+AI Chatbot for suggestions on filling out each project / etc
+Markdown Text
+Excalibur embed?
+Align Buttons / elements better
+keybindings?
+upload images?
+teams? shared projects
+Timer / focus zone

@@ -5,16 +5,18 @@ import { Project } from '../api/client';
 interface ContextType {
   selectedProject: Project | null;
   onProjectUpdate: (projectId: string, updatedData: any) => Promise<any>;
+  onProjectArchive: (projectId: string, isArchived: boolean) => Promise<void>;
   onProjectDelete: (projectId: string) => Promise<void>;
 }
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedProject, onProjectUpdate, onProjectDelete } = useOutletContext<ContextType>();
+  const { selectedProject, onProjectUpdate, onProjectArchive, onProjectDelete } = useOutletContext<ContextType>();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setSaving] = useState(false);
+  const [archiveLoading, setArchiveLoading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [error, setError] = useState('');
 
@@ -52,6 +54,21 @@ const SettingsPage: React.FC = () => {
     setDescription(selectedProject?.description || '');
     setIsEditing(false);
     setError('');
+  };
+
+  const handleArchiveToggle = async () => {
+    if (!selectedProject) return;
+
+    setArchiveLoading(true);
+    setError('');
+
+    try {
+      await onProjectArchive(selectedProject.id, !selectedProject.isArchived);
+    } catch (err) {
+      setError('Failed to update project archive status');
+    } finally {
+      setArchiveLoading(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -154,6 +171,26 @@ const SettingsPage: React.FC = () => {
           </div>
 
           <div>
+            <h3 className="font-medium text-gray-800">Project Status:</h3>
+            <div className="flex items-center mt-2">
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                selectedProject.isArchived 
+                  ? 'bg-gray-100 text-gray-800' 
+                  : 'bg-green-100 text-green-800'
+              }`}>
+                {selectedProject.isArchived ? 'Archived' : 'Active'}
+              </span>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                selectedProject.isShared
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-gray-100 text-gray-800'
+              }`}>
+                {selectedProject.isShared ? 'Shared' : 'Private'}
+              </span>
+            </div>
+          </div>
+
+          <div>
             <h3 className="font-medium text-gray-800">Project ID:</h3>
             <p className="text-gray-600 mt-1 font-mono text-sm">{selectedProject.id}</p>
           </div>
@@ -169,7 +206,29 @@ const SettingsPage: React.FC = () => {
           </div>
 
           <div className="pt-4 border-t border-gray-200">
+            <h3 className="font-medium text-gray-800 mb-4">Project Actions</h3>
+            
+            
+          </div>
+
+          <div className="pt-4 border-t border-gray-200">
             <h3 className="font-medium text-gray-800 mb-4">Danger Zone</h3>
+            <div className="space-y-3">
+              <div>
+                <button
+                  onClick={handleArchiveToggle}
+                  className={`px-4 py-2 rounded-md font-medium disabled:opacity-50 ${
+                    selectedProject.isArchived 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'bg-gray-600 text-white hover:bg-gray-700'
+                  }`}
+                  disabled={archiveLoading}
+                >
+                  {archiveLoading ? 'Processing...' : selectedProject.isArchived ? 'Make Current' : 'Archive Project'}
+                </button>
+              </div>
+            </div>
+            <br />
             {deleteConfirm ? (
               <div className="space-y-3">
                 <p className="text-red-600 text-sm">Are you sure you want to delete this project? This action cannot be undone.</p>

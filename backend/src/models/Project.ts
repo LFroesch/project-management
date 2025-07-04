@@ -8,6 +8,7 @@ export interface IProject extends Document {
   roadmap: string;
   userId: mongoose.Types.ObjectId;
   isArchived: boolean;
+  isShared: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,6 +42,10 @@ const projectSchema = new Schema<IProject>({
     required: true
   },
   isArchived: {
+    type: Boolean,
+    default: false
+  },
+  isShared: {
     type: Boolean,
     default: false
   },

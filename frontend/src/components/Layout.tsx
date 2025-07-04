@@ -23,7 +23,13 @@ const Layout: React.FC = () => {
           setSelectedProject(updatedProject);
         }
       } else if (projectsResponse.projects.length > 0) {
-        setSelectedProject(projectsResponse.projects[0]);
+        // Default to first non-archived project
+        const activeProjects = projectsResponse.projects.filter(p => !p.isArchived);
+        if (activeProjects.length > 0) {
+          setSelectedProject(activeProjects[0]);
+        } else {
+          setSelectedProject(projectsResponse.projects[0]);
+        }
       }
     } catch (err) {
       console.error('Failed to load projects:', err);
@@ -41,7 +47,13 @@ const Layout: React.FC = () => {
         setProjects(projectsResponse.projects);
         console.log('Initial projects:', projectsResponse.projects);
         if (projectsResponse.projects.length > 0) {
-          setSelectedProject(projectsResponse.projects[0]);
+          // Default to first non-archived project
+          const activeProjects = projectsResponse.projects.filter(p => !p.isArchived);
+          if (activeProjects.length > 0) {
+            setSelectedProject(activeProjects[0]);
+          } else {
+            setSelectedProject(projectsResponse.projects[0]);
+          }
         }
       } catch (err) {
         navigate('/login');
@@ -81,6 +93,19 @@ const Layout: React.FC = () => {
     }
   };
 
+  const handleProjectArchive = async (projectId: string, isArchived: boolean) => {
+    try {
+      await projectAPI.archive(projectId, isArchived);
+      // Refresh projects list
+      await loadProjects();
+      // Keep the same project selected after archiving/unarchiving
+      // The loadProjects function will update the selectedProject with fresh data
+    } catch (error) {
+      console.error('Failed to archive project:', error);
+      throw error;
+    }
+  };
+
   const handleProjectDelete = async (projectId: string) => {
     try {
       await projectAPI.delete(projectId);
@@ -114,6 +139,11 @@ const Layout: React.FC = () => {
   ];
 
   const currentTab = location.pathname.slice(1) || 'notes';
+
+  // Separate projects by archive status
+  const currentProjects = projects.filter(p => !p.isArchived);
+  const archivedProjects = projects.filter(p => p.isArchived);
+  const sharedProjects = projects.filter(p => p.isShared);
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -152,7 +182,7 @@ const Layout: React.FC = () => {
           <div className="mb-8">
             <h3 className="font-semibold mb-3">Current</h3>
             <div className="space-y-2">
-              {projects.length === 0 ? (
+              {currentProjects.length === 0 ? (
                 <div className="text-center py-4">
                   <p className="text-gray-500 text-sm mb-3">No projects yet</p>
                   <button
@@ -163,7 +193,7 @@ const Layout: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                projects.map((project) => (
+                currentProjects.map((project) => (
                   <div
                     key={project.id}
                     onClick={() => {
@@ -181,13 +211,57 @@ const Layout: React.FC = () => {
             </div>
           </div>
 
-          {/* Old Projects */}
+          {/* Archived Projects */}
           <div className="mb-8">
             <h3 className="font-semibold mb-3">Old</h3>
-            <div className="pl-6">
-              <div className="text-sm text-gray-500 italic">
-                No archived projects
-              </div>
+            <div className="space-y-2">
+              {archivedProjects.length === 0 ? (
+                <div className="text-sm text-gray-500 italic pl-2">
+                  No archived projects
+                </div>
+              ) : (
+                archivedProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    onClick={() => {
+                      console.log('Selecting archived project:', project);
+                      setSelectedProject(project);
+                    }}
+                    className={`flex items-center cursor-pointer p-2 rounded hover:bg-gray-50 ${
+                      selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
+                    }`}
+                  >
+                    <span className="text-sm font-medium text-gray-600">{project.name}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Archived Projects */}
+          <div className="mb-8">
+            <h3 className="font-semibold mb-3">Shared</h3>
+            <div className="space-y-2">
+              {sharedProjects.length === 0 ? (
+                <div className="text-sm text-gray-500 italic pl-2">
+                  No shared projects
+                </div>
+              ) : (
+                sharedProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    onClick={() => {
+                      console.log('Selecting shared project:', project);
+                      setSelectedProject(project);
+                    }}
+                    className={`flex items-center cursor-pointer p-2 rounded hover:bg-gray-50 ${
+                      selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
+                    }`}
+                  >
+                    <span className="text-sm font-medium text-gray-600">{project.name}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -228,6 +302,7 @@ const Layout: React.FC = () => {
             <Outlet context={{ 
               selectedProject, 
               onProjectUpdate: handleProjectUpdate,
+              onProjectArchive: handleProjectArchive,
               onProjectDelete: handleProjectDelete 
             }} />
           </div>

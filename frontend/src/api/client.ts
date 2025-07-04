@@ -22,6 +22,8 @@ export interface Project {
   notes: string;
   staging: string;
   roadmap: string;
+  isArchived: boolean;
+  isShared: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -90,6 +92,9 @@ export const projectAPI = {
   
   update: (id: string, data: UpdateProjectData): Promise<ProjectResponse> =>
     apiClient.put(`/projects/${id}`, data).then(res => res.data),
+  
+  archive: (id: string, isArchived: boolean): Promise<ProjectResponse> =>
+    apiClient.patch(`/projects/${id}/archive`, { isArchived }).then(res => res.data),
   
   delete: (id: string): Promise<{ message: string }> =>
     apiClient.delete(`/projects/${id}`).then(res => res.data),

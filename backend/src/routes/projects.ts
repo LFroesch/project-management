@@ -37,6 +37,8 @@ router.post('/', async (req: AuthRequest, res) => {
         notes: project.notes,
         staging: project.staging,
         roadmap: project.roadmap,
+        isArchived: project.isArchived,
+        isShared: project.isShared,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt
       }
@@ -58,6 +60,8 @@ router.get('/', async (req: AuthRequest, res) => {
       notes: project.notes,
       staging: project.staging,
       roadmap: project.roadmap,
+      isArchived: project.isArchived,
+      isShared: project.isShared,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt
     }));
@@ -88,6 +92,8 @@ router.get('/:id', async (req: AuthRequest, res) => {
         notes: project.notes,
         staging: project.staging,
         roadmap: project.roadmap,
+        isArchived: project.isArchived,
+        isShared: project.isShared,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt
       }
@@ -133,12 +139,53 @@ router.put('/:id', async (req: AuthRequest, res) => {
         notes: project.notes,
         staging: project.staging,
         roadmap: project.roadmap,
+        isArchived: project.isArchived,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt
       }
     });
   } catch (error) {
     console.error('Update project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+// Archive/Unarchive project
+router.patch('/:id/archive', async (req: AuthRequest, res) => {
+  try {
+    const { isArchived } = req.body;
+    
+    if (typeof isArchived !== 'boolean') {
+      return res.status(400).json({ message: 'isArchived must be a boolean value' });
+    }
+
+    const project = await Project.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { isArchived },
+      { new: true, runValidators: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({
+      message: `Project ${isArchived ? 'archived' : 'unarchived'} successfully`,
+      project: {
+        id: project._id,
+        name: project.name,
+        description: project.description,
+        notes: project.notes,
+        staging: project.staging,
+        roadmap: project.roadmap,
+        isArchived: project.isArchived,
+        isShared: project.isShared,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error('Archive project error:', error);
     res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
   }
 });
