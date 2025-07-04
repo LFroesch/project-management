@@ -14,6 +14,7 @@ Goal:
 
 Pages:
 - Notes / Goals / To Do / Dev Log
+^ Fix markdown
 - Roadmap - Plan from inception to Deployment and beyond / Stack
 - Docs / API planning etc
 - Settings / Info
@@ -22,7 +23,6 @@ Pages:
 Future Features (Claude ignore for now)
 Search bar on side bar for projects / Filter / sorting
 Cronjobs/Analytics
-Staging Enum -> Options
 AI Chatbot for suggestions on filling out each project / etc
 Markdown Text
 Excalibur embed?
