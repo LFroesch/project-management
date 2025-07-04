@@ -21,7 +21,6 @@ const CreateProject: React.FC = () => {
         name: formData.name,
         description: formData.description,
         notes: '',
-        staging: '',
         roadmap: ''
       });
       navigate('/');

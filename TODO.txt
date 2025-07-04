@@ -13,10 +13,11 @@ Goal:
     Payments? Free Tier Usage etc.
 
 Pages:
-- Notes [Markdown] / Goals / To Do / Dev Log | All of these as collapsible sections
+- Notes / Goals / To Do / Dev Log
 - Roadmap - Plan from inception to Deployment and beyond / Stack
-- Docs / API planning etc [Make this editable, keep the sections we can add those fields to the project schema ],
-- Settings / Info ( Staging [ENUM] / Links ["Add" box for seperate links] / Color / Category )
+- Docs / API planning etc
+- Settings / Info
+- Analytics [?]
 
 Future Features (Claude ignore for now)
 Search bar on side bar for projects / Filter / sorting

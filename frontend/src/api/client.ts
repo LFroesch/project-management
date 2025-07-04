@@ -15,13 +15,64 @@ export interface User {
   lastName: string;
 }
 
+export interface Todo {
+  id: string;
+  text: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+export interface DevLogEntry {
+  id: string;
+  entry: string;
+  date: string;
+}
+
+export interface Phase {
+  id: string;
+  name: string;
+  description: string;
+  status: 'not-started' | 'in-progress' | 'completed';
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface Link {
+  id: string;
+  title: string;
+  url: string;
+  type: 'github' | 'demo' | 'docs' | 'other';
+}
+
 export interface Project {
   id: string;
   name: string;
   description: string;
+  
+  // Enhanced Notes Section
   notes: string;
-  staging: string;
+  goals: string;
+  todos: Todo[];
+  devLog: DevLogEntry[];
+  
+  // Enhanced Roadmap Section
   roadmap: string;
+  phases: Phase[];
+  
+  // Enhanced Documentation Section
+  apiDocs: string;
+  technicalDocs: string;
+  userDocs: string;
+  codeDocs: string;
+  
+  // Enhanced Settings Section
+  stagingEnvironment: 'development' | 'staging' | 'production';
+  links: Link[];
+  color: string;
+  category: string;
+  tags: string[];
+  
+  // Existing fields
   isArchived: boolean;
   isShared: boolean;
   createdAt: string;
@@ -53,17 +104,52 @@ export interface RegisterData {
 export interface CreateProjectData {
   name: string;
   description: string;
-  notes: string;
-  staging: string;
-  roadmap: string;
+  notes?: string;
+  goals?: string;
+  roadmap?: string;
+  apiDocs?: string;
+  technicalDocs?: string;
+  userDocs?: string;
+  codeDocs?: string;
+  stagingEnvironment?: 'development' | 'staging' | 'production';
+  color?: string;
+  category?: string;
+  tags?: string[];
 }
 
 export interface UpdateProjectData {
-  name: string;
-  description: string;
-  notes: string;
-  staging: string;
-  roadmap: string;
+  name?: string;
+  description?: string;
+  notes?: string;
+  goals?: string;
+  roadmap?: string;
+  apiDocs?: string;
+  technicalDocs?: string;
+  userDocs?: string;
+  codeDocs?: string;
+  stagingEnvironment?: 'development' | 'staging' | 'production';
+  color?: string;
+  category?: string;
+  tags?: string[];
+}
+
+export interface CreateTodoData {
+  text: string;
+}
+
+export interface UpdateTodoData {
+  text?: string;
+  completed?: boolean;
+}
+
+export interface CreateDevLogData {
+  entry: string;
+}
+
+export interface CreateLinkData {
+  title: string;
+  url: string;
+  type?: 'github' | 'demo' | 'docs' | 'other';
 }
 
 export const authAPI = {
@@ -98,4 +184,25 @@ export const projectAPI = {
   
   delete: (id: string): Promise<{ message: string }> =>
     apiClient.delete(`/projects/${id}`).then(res => res.data),
+  
+  // Todo management
+  createTodo: (projectId: string, data: CreateTodoData): Promise<{ message: string; todo: Todo }> =>
+    apiClient.post(`/projects/${projectId}/todos`, data).then(res => res.data),
+  
+  updateTodo: (projectId: string, todoId: string, data: UpdateTodoData): Promise<{ message: string; todo: Todo }> =>
+    apiClient.put(`/projects/${projectId}/todos/${todoId}`, data).then(res => res.data),
+  
+  deleteTodo: (projectId: string, todoId: string): Promise<{ message: string }> =>
+    apiClient.delete(`/projects/${projectId}/todos/${todoId}`).then(res => res.data),
+  
+  // Dev log management
+  createDevLogEntry: (projectId: string, data: CreateDevLogData): Promise<{ message: string; entry: DevLogEntry }> =>
+    apiClient.post(`/projects/${projectId}/devlog`, data).then(res => res.data),
+  
+  // Links management
+  createLink: (projectId: string, data: CreateLinkData): Promise<{ message: string; link: Link }> =>
+    apiClient.post(`/projects/${projectId}/links`, data).then(res => res.data),
+
+  deleteLink: (projectId: string, linkId: string): Promise<{ message: string }> =>
+    apiClient.delete(`/projects/${projectId}/links/${linkId}`).then(res => res.data),
 };

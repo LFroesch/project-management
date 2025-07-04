@@ -152,9 +152,6 @@ const HomePage: React.FC = () => {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium text-gray-800">Staging Environment:</h4>
-                  <div className="text-gray-600 whitespace-pre-wrap">
-                    {selectedProject.staging || 'No staging info...'}
-                  </div>
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-800">Created:</h4>

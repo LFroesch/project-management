@@ -130,12 +130,10 @@ const Layout: React.FC = () => {
   }
 
   const tabs = [
-    { id: 'notes', label: 'notes tab', path: '/notes' },
-    { id: 'roadmap', label: 'road map', path: '/roadmap' },
-    { id: 'stack', label: 'stack', path: '/stack' },
-    { id: 'docs', label: 'docs/api plan', path: '/docs' },
-    { id: 'etc', label: 'etc', path: '/etc' },
-    { id: 'settings', label: 'settings', path: '/settings' }
+    { id: 'notes', label: 'Notes/Goals/Tasks', path: '/notes' },
+    { id: 'roadmap', label: 'Roadmap/Stack', path: '/roadmap' },
+    { id: 'docs', label: 'Documentation', path: '/docs' },
+    { id: 'settings', label: 'Settings/Info', path: '/settings' }
   ];
 
   const currentTab = location.pathname.slice(1) || 'notes';
@@ -204,7 +202,17 @@ const Layout: React.FC = () => {
                       selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
                     }`}
                   >
-                    <span className="text-sm font-medium">{project.name}</span>
+                    {/* Project color indicator */}
+                    <div 
+                      className="w-3 h-3 rounded-full mr-3"
+                      style={{ backgroundColor: project.color }}
+                    ></div>
+                    <div className="flex-1">
+                      <span className="text-sm font-medium">{project.name}</span>
+                      {project.category && project.category !== 'general' && (
+                        <div className="text-xs text-gray-500">{project.category}</div>
+                      )}
+                    </div>
                   </div>
                 ))
               )}
@@ -213,7 +221,7 @@ const Layout: React.FC = () => {
 
           {/* Archived Projects */}
           <div className="mb-8">
-            <h3 className="font-semibold mb-3">Old</h3>
+            <h3 className="font-semibold mb-3">Archived</h3>
             <div className="space-y-2">
               {archivedProjects.length === 0 ? (
                 <div className="text-sm text-gray-500 italic pl-2">
@@ -231,6 +239,10 @@ const Layout: React.FC = () => {
                       selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
                     }`}
                   >
+                    <div 
+                      className="w-3 h-3 rounded-full mr-3"
+                      style={{ backgroundColor: project.color }}
+                    ></div>
                     <span className="text-sm font-medium text-gray-600">{project.name}</span>
                   </div>
                 ))
@@ -238,7 +250,7 @@ const Layout: React.FC = () => {
             </div>
           </div>
 
-          {/* Archived Projects */}
+          {/* Shared Projects */}
           <div className="mb-8">
             <h3 className="font-semibold mb-3">Shared</h3>
             <div className="space-y-2">
@@ -258,6 +270,10 @@ const Layout: React.FC = () => {
                       selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
                     }`}
                   >
+                    <div 
+                      className="w-3 h-3 rounded-full mr-3"
+                      style={{ backgroundColor: project.color }}
+                    ></div>
                     <span className="text-sm font-medium text-gray-600">{project.name}</span>
                   </div>
                 ))
@@ -303,7 +319,8 @@ const Layout: React.FC = () => {
               selectedProject, 
               onProjectUpdate: handleProjectUpdate,
               onProjectArchive: handleProjectArchive,
-              onProjectDelete: handleProjectDelete 
+              onProjectDelete: handleProjectDelete,
+              onProjectRefresh: loadProjects
             }} />
           </div>
         </div>

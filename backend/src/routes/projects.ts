@@ -1,18 +1,32 @@
 import express from 'express';
 import { Project } from '../models/Project';
 import { requireAuth, AuthRequest } from '../middleware/auth';
+import { v4 as uuidv4 } from 'uuid'; // Need to add this dependency
 
 const router = express.Router();
 
 // All routes require authentication
 router.use(requireAuth);
 
-// Create project
+// Create project - Updated to handle new fields
 router.post('/', async (req: AuthRequest, res) => {
   try {
-    const { name, description, notes, staging, roadmap } = req.body;
+    const { 
+      name, 
+      description, 
+      notes, 
+      goals, 
+      roadmap, 
+      apiDocs, 
+      technicalDocs,
+      userDocs,
+      codeDocs,
+      stagingEnvironment,
+      color,
+      category,
+      tags
+    } = req.body;
 
-    // Add validation
     if (!name || !description) {
       return res.status(400).json({ message: 'Name and description are required' });
     }
@@ -21,134 +35,63 @@ router.post('/', async (req: AuthRequest, res) => {
       name: name.trim(),
       description: description.trim(),
       notes: notes || '',
-      staging: staging || '',
+      goals: goals || '',
+      todos: [],
+      devLog: [],
       roadmap: roadmap || '',
+      phases: [],
+      apiDocs: apiDocs || '',
+      technicalDocs: technicalDocs || '',
+      userDocs: userDocs || '',
+      codeDocs: codeDocs || '',
+      stagingEnvironment: stagingEnvironment || 'development',
+      links: [],
+      color: color || '#3B82F6',
+      category: category || 'general',
+      tags: tags || [],
       userId: req.userId
     });
 
     await project.save();
-
     res.status(201).json({
       message: 'Project created successfully',
-      project: {
-        id: project._id,
-        name: project.name,
-        description: project.description,
-        notes: project.notes,
-        staging: project.staging,
-        roadmap: project.roadmap,
-        isArchived: project.isArchived,
-        isShared: project.isShared,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      }
+      project: formatProjectResponse(project)
     });
   } catch (error) {
     console.error('Create project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Get user's projects
-router.get('/', async (req: AuthRequest, res) => {
-  try {
-    const projects = await Project.find({ userId: req.userId }).sort({ createdAt: -1 });
-    const formattedProjects = projects.map(project => ({
-      id: project._id,
-      name: project.name,
-      description: project.description,
-      notes: project.notes,
-      staging: project.staging,
-      roadmap: project.roadmap,
-      isArchived: project.isArchived,
-      isShared: project.isShared,
-      createdAt: project.createdAt,
-      updatedAt: project.updatedAt
-    }));
-    res.json({ projects: formattedProjects });
-  } catch (error) {
-    console.error('Get projects error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
-  }
-});
-
-// Get single project
-router.get('/:id', async (req: AuthRequest, res) => {
+// DELETE: Delete a link
+router.delete('/:id/links/:linkId', async (req: AuthRequest, res) => {
   try {
     const project = await Project.findOne({ 
       _id: req.params.id, 
       userId: req.userId 
     });
-    
-    if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
-
-    res.json({ 
-      project: {
-        id: project._id,
-        name: project.name,
-        description: project.description,
-        notes: project.notes,
-        staging: project.staging,
-        roadmap: project.roadmap,
-        isArchived: project.isArchived,
-        isShared: project.isShared,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      }
-    });
-  } catch (error) {
-    console.error('Get single project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
-  }
-});
-
-// Update project
-router.put('/:id', async (req: AuthRequest, res) => {
-  try {
-    const { name, description, notes, staging, roadmap } = req.body;
-    
-    // Add validation
-    if (!name || !description) {
-      return res.status(400).json({ message: 'Name and description are required' });
-    }
-
-    const project = await Project.findOneAndUpdate(
-      { _id: req.params.id, userId: req.userId },
-      { 
-        name: name.trim(), 
-        description: description.trim(), 
-        notes: notes || '', 
-        staging: staging || '', 
-        roadmap: roadmap || ''
-      },
-      { new: true, runValidators: true }
-    );
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    res.json({
-      message: 'Project updated successfully',
-      project: {
-        id: project._id,
-        name: project.name,
-        description: project.description,
-        notes: project.notes,
-        staging: project.staging,
-        roadmap: project.roadmap,
-        isArchived: project.isArchived,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      }
-    });
+    const linkExists = project.links.some(l => l.id === req.params.linkId);
+    if (!linkExists) {
+      return res.status(404).json({ message: 'Link not found' });
+    }
+
+    project.links = project.links.filter(l => l.id !== req.params.linkId);
+    await project.save();
+
+    res.json({ message: 'Link deleted successfully' });
   } catch (error) {
-    console.error('Update project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+    console.error('Delete link error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
+
+// Add these routes to your backend/src/routes/projects.ts file
+// Place them after the existing routes but before the export default router line
 
 // Archive/Unarchive project
 router.patch('/:id/archive', async (req: AuthRequest, res) => {
@@ -171,18 +114,7 @@ router.patch('/:id/archive', async (req: AuthRequest, res) => {
 
     res.json({
       message: `Project ${isArchived ? 'archived' : 'unarchived'} successfully`,
-      project: {
-        id: project._id,
-        name: project.name,
-        description: project.description,
-        notes: project.notes,
-        staging: project.staging,
-        roadmap: project.roadmap,
-        isArchived: project.isArchived,
-        isShared: project.isShared,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      }
+      project: formatProjectResponse(project)
     });
   } catch (error) {
     console.error('Archive project error:', error);
@@ -208,5 +140,300 @@ router.delete('/:id', async (req: AuthRequest, res) => {
     res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
   }
 });
+
+// Get user's projects - Updated response format
+router.get('/', async (req: AuthRequest, res) => {
+  try {
+    const projects = await Project.find({ userId: req.userId }).sort({ createdAt: -1 });
+    const formattedProjects = projects.map(formatProjectResponse);
+    res.json({ projects: formattedProjects });
+  } catch (error) {
+    console.error('Get projects error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get single project - Updated response format
+router.get('/:id', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+    
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({ project: formatProjectResponse(project) });
+  } catch (error) {
+    console.error('Get single project error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update project - Enhanced to handle all new fields
+router.put('/:id', async (req: AuthRequest, res) => {
+  try {
+    const updateData = { ...req.body };
+    
+    // Validate required fields
+    if (updateData.name && !updateData.name.trim()) {
+      return res.status(400).json({ message: 'Name cannot be empty' });
+    }
+    
+    if (updateData.description && !updateData.description.trim()) {
+      return res.status(400).json({ message: 'Description cannot be empty' });
+    }
+
+    // Validate staging environment
+    if (updateData.stagingEnvironment && 
+        !['development', 'staging', 'production'].includes(updateData.stagingEnvironment)) {
+      return res.status(400).json({ message: 'Invalid staging environment' });
+    }
+
+    const project = await Project.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({
+      message: 'Project updated successfully',
+      project: formatProjectResponse(project)
+    });
+  } catch (error) {
+    console.error('Update project error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// NEW: Todo management endpoints
+router.post('/:id/todos', async (req: AuthRequest, res) => {
+  try {
+    const { text } = req.body;
+    
+    if (!text || !text.trim()) {
+      return res.status(400).json({ message: 'Todo text is required' });
+    }
+
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const newTodo = {
+      id: uuidv4(),
+      text: text.trim(),
+      completed: false,
+      createdAt: new Date()
+    };
+
+    project.todos.push(newTodo);
+    await project.save();
+
+    res.json({
+      message: 'Todo added successfully',
+      todo: newTodo
+    });
+  } catch (error) {
+    console.error('Add todo error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.put('/:id/todos/:todoId', async (req: AuthRequest, res) => {
+  try {
+    const { text, completed } = req.body;
+
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const todo = project.todos.find(t => t.id === req.params.todoId);
+    if (!todo) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+
+    if (text !== undefined) todo.text = text.trim();
+    if (completed !== undefined) todo.completed = completed;
+
+    await project.save();
+
+    res.json({
+      message: 'Todo updated successfully',
+      todo: todo
+    });
+  } catch (error) {
+    console.error('Update todo error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/:id/todos/:todoId', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    project.todos = project.todos.filter(t => t.id !== req.params.todoId);
+    await project.save();
+
+    res.json({ message: 'Todo deleted successfully' });
+  } catch (error) {
+    console.error('Delete todo error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// NEW: Dev log management endpoints
+router.post('/:id/devlog', async (req: AuthRequest, res) => {
+  try {
+    const { entry } = req.body;
+    
+    if (!entry || !entry.trim()) {
+      return res.status(400).json({ message: 'Dev log entry is required' });
+    }
+
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const newEntry = {
+      id: uuidv4(),
+      entry: entry.trim(),
+      date: new Date()
+    };
+
+    project.devLog.push(newEntry);
+    await project.save();
+
+    res.json({
+      message: 'Dev log entry added successfully',
+      entry: newEntry
+    });
+  } catch (error) {
+    console.error('Add dev log error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Archive/Unarchive project
+router.patch('/:id/archive', async (req: AuthRequest, res) => {
+  try {
+    const { isArchived } = req.body;
+    
+    if (typeof isArchived !== 'boolean') {
+      return res.status(400).json({ message: 'isArchived must be a boolean value' });
+    }
+
+    const project = await Project.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { isArchived },
+      { new: true, runValidators: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({
+      message: `Project ${isArchived ? 'archived' : 'unarchived'} successfully`,
+      project: formatProjectResponse(project)
+    });
+  } catch (error) {
+    console.error('Archive project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+// NEW: Links management endpoints
+router.post('/:id/links', async (req: AuthRequest, res) => {
+  try {
+    const { title, url, type } = req.body;
+    
+    if (!title || !url) {
+      return res.status(400).json({ message: 'Title and URL are required' });
+    }
+
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const newLink = {
+      id: uuidv4(),
+      title: title.trim(),
+      url: url.trim(),
+      type: type || 'other'
+    };
+
+    project.links.push(newLink);
+    await project.save();
+
+    res.json({
+      message: 'Link added successfully',
+      link: newLink
+    });
+  } catch (error) {
+    console.error('Add link error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Helper function to format project response
+function formatProjectResponse(project: any) {
+  return {
+    id: project._id,
+    name: project.name,
+    description: project.description,
+    notes: project.notes,
+    goals: project.goals,
+    todos: project.todos,
+    devLog: project.devLog,
+    roadmap: project.roadmap,
+    phases: project.phases,
+    apiDocs: project.apiDocs,
+    technicalDocs: project.technicalDocs,
+    userDocs: project.userDocs,
+    codeDocs: project.codeDocs,
+    stagingEnvironment: project.stagingEnvironment,
+    links: project.links,
+    color: project.color,
+    category: project.category,
+    tags: project.tags,
+    isArchived: project.isArchived,
+    isShared: project.isShared,
+    createdAt: project.createdAt,
+    updatedAt: project.updatedAt
+  };
+}
 
 export default router;
