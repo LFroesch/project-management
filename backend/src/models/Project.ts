@@ -7,6 +7,7 @@ export interface IProject extends Document {
   staging: string;
   roadmap: string;
   userId: mongoose.Types.ObjectId;
+  isArchived: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,7 +39,11 @@ const projectSchema = new Schema<IProject>({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
+  },
+  isArchived: {
+    type: Boolean,
+    default: false
+  },
 }, {
   timestamps: true
 });

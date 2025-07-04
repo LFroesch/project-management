@@ -163,7 +163,7 @@ const Layout: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                projects.map((project, index) => (
+                projects.map((project) => (
                   <div
                     key={project.id}
                     onClick={() => {
@@ -174,9 +174,6 @@ const Layout: React.FC = () => {
                       selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
                     }`}
                   >
-                    <span className="text-lg mr-2">
-                      {index === 0 ? '🔥' : index === 1 ? '🦄' : index === 2 ? '💎' : '⚡'}
-                    </span>
                     <span className="text-sm font-medium">{project.name}</span>
                   </div>
                 ))

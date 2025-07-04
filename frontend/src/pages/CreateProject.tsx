@@ -6,10 +6,7 @@ const CreateProject: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
-    notes: '',
-    staging: '',
-    roadmap: ''
+    description: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,7 +17,13 @@ const CreateProject: React.FC = () => {
     setError('');
 
     try {
-      await projectAPI.create(formData);
+      await projectAPI.create({
+        name: formData.name,
+        description: formData.description,
+        notes: '',
+        staging: '',
+        roadmap: ''
+      });
       navigate('/');
     } catch (err) {
       setError('Failed to create project');
@@ -79,48 +82,9 @@ const CreateProject: React.FC = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                rows={3}
+                rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Notes
-              </label>
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Staging
-              </label>
-              <textarea
-                name="staging"
-                value={formData.staging}
-                onChange={handleChange}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Roadmap
-              </label>
-              <textarea
-                name="roadmap"
-                value={formData.roadmap}
-                onChange={handleChange}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
