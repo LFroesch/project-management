@@ -186,23 +186,17 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">
-          {selectedProject.name} - Settings
-        </h1>
-      </div>
-
       {error && (
         <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
         </div>
       )}
 
-      {/* Basic Settings */}
-      <CollapsibleSection title="Basic Information" defaultOpen={true}>
+      {/* Project Information */}
+      <CollapsibleSection title="Project Information" defaultOpen={true}>
         <div className="mt-4">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Project name and description</p>
+            <h3 className="text-lg font-semibold text-gray-800">Basic Info</h3>
             <div className="flex space-x-2">
               {isEditingBasic ? (
                 <>
@@ -248,7 +242,7 @@ const SettingsPage: React.FC = () => {
                 />
               ) : (
                 <div className="p-3 bg-gray-50 rounded-md">
-                  <p className="text-gray-700 font-medium">{name}</p>
+                  <p className="text-gray-700 font-sm">{name}</p>
                 </div>
               )}
             </div>
@@ -267,45 +261,42 @@ const SettingsPage: React.FC = () => {
                 />
               ) : (
                 <div className="p-3 bg-gray-50 rounded-md">
-                  <p className="text-gray-700">{description}</p>
+                  <p className="text-gray-700 font-sm">{description}</p>
                 </div>
               )}
             </div>
           </div>
-        </div>
-      </CollapsibleSection>
 
-      {/* Project Metadata */}
-      <CollapsibleSection title="Project Metadata">
-        <div className="mt-4">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Environment, color, category, and tags</p>
-            <div className="flex space-x-2">
-              {isEditingMetadata ? (
-                <>
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">Metadata</h3>
+              <div className="flex space-x-2">
+                {isEditingMetadata ? (
+                  <>
+                    <button
+                      onClick={() => handleCancel('metadata')}
+                      className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                      disabled={savingMetadata}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveMetadata}
+                      className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                      disabled={savingMetadata}
+                    >
+                      {savingMetadata ? 'Saving...' : 'Save'}
+                    </button>
+                  </>
+                ) : (
                   <button
-                    onClick={() => handleCancel('metadata')}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                    disabled={savingMetadata}
+                    onClick={() => setIsEditingMetadata(true)}
+                    className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
                   >
-                    Cancel
+                    Edit
                   </button>
-                  <button
-                    onClick={handleSaveMetadata}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                    disabled={savingMetadata}
-                  >
-                    {savingMetadata ? 'Saving...' : 'Save'}
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setIsEditingMetadata(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
-                >
-                  Edit
-                </button>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
@@ -579,6 +570,16 @@ const SettingsPage: React.FC = () => {
                       : 'bg-gray-100 text-gray-800'
                   }`}>
                     {selectedProject.isShared ? 'Shared' : 'Private'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Deployment Status:</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    selectedProject.isShared
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    Coming Soon
                   </span>
                 </div>
               </div>
