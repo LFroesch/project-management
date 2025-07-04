@@ -10,6 +10,26 @@ const Layout: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const loadProjects = async () => {
+    try {
+      const projectsResponse = await projectAPI.getAll();
+      console.log('Projects loaded:', projectsResponse.projects);
+      setProjects(projectsResponse.projects);
+      
+      // If we have a selected project, update it with fresh data
+      if (selectedProject) {
+        const updatedProject = projectsResponse.projects.find(p => p.id === selectedProject.id);
+        if (updatedProject) {
+          setSelectedProject(updatedProject);
+        }
+      } else if (projectsResponse.projects.length > 0) {
+        setSelectedProject(projectsResponse.projects[0]);
+      }
+    } catch (err) {
+      console.error('Failed to load projects:', err);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -19,6 +39,7 @@ const Layout: React.FC = () => {
         ]);
         setUser(userResponse.user);
         setProjects(projectsResponse.projects);
+        console.log('Initial projects:', projectsResponse.projects);
         if (projectsResponse.projects.length > 0) {
           setSelectedProject(projectsResponse.projects[0]);
         }
@@ -38,6 +59,40 @@ const Layout: React.FC = () => {
       navigate('/login');
     } catch (err) {
       navigate('/login');
+    }
+  };
+
+  const handleProjectUpdate = async (projectId: string, updatedData: any) => {
+    try {
+      console.log('Updating project:', projectId, updatedData);
+      
+      if (!projectId || projectId === 'undefined') {
+        throw new Error('Invalid project ID');
+      }
+
+      const response = await projectAPI.update(projectId, updatedData);
+      console.log('Update response:', response);
+      // Refresh the projects list to get the updated data
+      await loadProjects();
+      return response;
+    } catch (error) {
+      console.error('Failed to update project:', error);
+      throw error;
+    }
+  };
+
+  const handleProjectDelete = async (projectId: string) => {
+    try {
+      await projectAPI.delete(projectId);
+      // Refresh projects list
+      await loadProjects();
+      // If we deleted the selected project, clear selection
+      if (selectedProject?.id === projectId) {
+        setSelectedProject(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete project:', error);
+      throw error;
     }
   };
 
@@ -62,10 +117,13 @@ const Layout: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
+      
       {/* Fixed Header */}
       <nav className="bg-white shadow-sm p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">Project Manager</h1>
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-bold">Project Manager</h1>
+          </div>
           <div className="flex items-center space-x-4">
             <span>Hello, {user?.firstName}!</span>
             <button
@@ -108,7 +166,10 @@ const Layout: React.FC = () => {
                 projects.map((project, index) => (
                   <div
                     key={project.id}
-                    onClick={() => setSelectedProject(project)}
+                    onClick={() => {
+                      console.log('Selecting project:', project);
+                      setSelectedProject(project);
+                    }}
                     className={`flex items-center cursor-pointer p-2 rounded hover:bg-gray-50 ${
                       selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
                     }`}
@@ -167,7 +228,11 @@ const Layout: React.FC = () => {
 
           {/* Page Content */}
           <div className="flex-1 overflow-auto bg-gray-50">
-            <Outlet context={{ selectedProject }} />
+            <Outlet context={{ 
+              selectedProject, 
+              onProjectUpdate: handleProjectUpdate,
+              onProjectDelete: handleProjectDelete 
+            }} />
           </div>
         </div>
       </div>

@@ -1,14 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Project } from '../api/client';
 
 interface ContextType {
   selectedProject: Project | null;
+  onProjectUpdate: (projectId: string, updatedData: any) => Promise<any>;
 }
 
 const NotesPage: React.FC = () => {
-  const context = useOutletContext<ContextType>();
-  const selectedProject = context?.selectedProject || null;
+  const { selectedProject, onProjectUpdate } = useOutletContext<ContextType>();
+  const [isEditing, setIsEditing] = useState(false);
+  const [notes, setNotes] = useState('');
+  const [loading, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (selectedProject) {
+      setNotes(selectedProject.notes || '');
+    }
+  }, [selectedProject]);
+
+  const handleSave = async () => {
+    if (!selectedProject || !selectedProject.id) {
+      setError('No project selected');
+      return;
+    }
+
+    setSaving(true);
+    setError('');
+
+    try {
+      console.log('Saving notes for project:', selectedProject.id);
+      
+      await onProjectUpdate(selectedProject.id, {
+        name: selectedProject.name,
+        description: selectedProject.description,
+        notes: notes,
+        staging: selectedProject.staging,
+        roadmap: selectedProject.roadmap
+      });
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Save error:', err);
+      setError('Failed to save notes');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setNotes(selectedProject?.notes || '');
+    setIsEditing(false);
+    setError('');
+  };
 
   if (!selectedProject) {
     return (
@@ -20,15 +64,62 @@ const NotesPage: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">
-        {selectedProject.name} - Notes
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">
+          {selectedProject.name} - Notes
+        </h1>
+        <div className="flex space-x-2">
+          {isEditing ? (
+            <>
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : 'Save'}
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+      </div>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
       
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h2 className="text-lg font-semibold mb-4">Project Notes</h2>
-        <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-          {selectedProject.notes || 'No notes yet...'}
-        </div>
+        
+        {isEditing ? (
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="w-full h-96 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            placeholder="Enter your project notes here..."
+          />
+        ) : (
+          <div className="min-h-96 p-4 bg-gray-50 rounded-md">
+            <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+              {notes || 'No notes yet...'}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

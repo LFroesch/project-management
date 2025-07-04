@@ -56,6 +56,14 @@ export interface CreateProjectData {
   roadmap: string;
 }
 
+export interface UpdateProjectData {
+  name: string;
+  description: string;
+  notes: string;
+  staging: string;
+  roadmap: string;
+}
+
 export const authAPI = {
   register: (data: RegisterData): Promise<AuthResponse> =>
     apiClient.post('/auth/register', data).then(res => res.data),
@@ -76,4 +84,13 @@ export const projectAPI = {
   
   getAll: (): Promise<{ projects: Project[] }> =>
     apiClient.get('/projects').then(res => res.data),
+  
+  getById: (id: string): Promise<{ project: Project }> =>
+    apiClient.get(`/projects/${id}`).then(res => res.data),
+  
+  update: (id: string, data: UpdateProjectData): Promise<ProjectResponse> =>
+    apiClient.put(`/projects/${id}`, data).then(res => res.data),
+  
+  delete: (id: string): Promise<{ message: string }> =>
+    apiClient.delete(`/projects/${id}`).then(res => res.data),
 };

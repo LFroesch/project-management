@@ -12,12 +12,17 @@ router.post('/', async (req: AuthRequest, res) => {
   try {
     const { name, description, notes, staging, roadmap } = req.body;
 
+    // Add validation
+    if (!name || !description) {
+      return res.status(400).json({ message: 'Name and description are required' });
+    }
+
     const project = new Project({
-      name,
-      description,
-      notes,
-      staging,
-      roadmap,
+      name: name.trim(),
+      description: description.trim(),
+      notes: notes || '',
+      staging: staging || '',
+      roadmap: roadmap || '',
       userId: req.userId
     });
 
@@ -37,7 +42,8 @@ router.post('/', async (req: AuthRequest, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    console.error('Create project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
   }
 });
 
@@ -45,9 +51,114 @@ router.post('/', async (req: AuthRequest, res) => {
 router.get('/', async (req: AuthRequest, res) => {
   try {
     const projects = await Project.find({ userId: req.userId }).sort({ createdAt: -1 });
-    res.json({ projects });
+    const formattedProjects = projects.map(project => ({
+      id: project._id,
+      name: project.name,
+      description: project.description,
+      notes: project.notes,
+      staging: project.staging,
+      roadmap: project.roadmap,
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt
+    }));
+    res.json({ projects: formattedProjects });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    console.error('Get projects error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+// Get single project
+router.get('/:id', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+    
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({ 
+      project: {
+        id: project._id,
+        name: project.name,
+        description: project.description,
+        notes: project.notes,
+        staging: project.staging,
+        roadmap: project.roadmap,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error('Get single project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+// Update project
+router.put('/:id', async (req: AuthRequest, res) => {
+  try {
+    const { name, description, notes, staging, roadmap } = req.body;
+    
+    // Add validation
+    if (!name || !description) {
+      return res.status(400).json({ message: 'Name and description are required' });
+    }
+
+    const project = await Project.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { 
+        name: name.trim(), 
+        description: description.trim(), 
+        notes: notes || '', 
+        staging: staging || '', 
+        roadmap: roadmap || ''
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({
+      message: 'Project updated successfully',
+      project: {
+        id: project._id,
+        name: project.name,
+        description: project.description,
+        notes: project.notes,
+        staging: project.staging,
+        roadmap: project.roadmap,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error('Update project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+// Delete project
+router.delete('/:id', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOneAndDelete({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({ message: 'Project deleted successfully' });
+  } catch (error) {
+    console.error('Delete project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
   }
 });
 
