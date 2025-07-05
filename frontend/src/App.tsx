@@ -13,6 +13,7 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
+    <div data-theme="cyberpunk" className="relative h-full w-full">
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
@@ -29,6 +30,7 @@ const App: React.FC = () => {
         </Routes>
       </Router>
     </QueryClientProvider>
+    </div>
   );
 };
 

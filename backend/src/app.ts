@@ -28,14 +28,15 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 
+app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
 // Start server
 const startServer = async () => {
   try {
     await connectDatabase();
     
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

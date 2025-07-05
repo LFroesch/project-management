@@ -146,6 +146,10 @@ export interface CreateDevLogData {
   entry: string;
 }
 
+export interface UpdateDevLogData {
+  entry: string;
+}
+
 export interface CreateLinkData {
   title: string;
   url: string;
@@ -198,6 +202,12 @@ export const projectAPI = {
   // Dev log management
   createDevLogEntry: (projectId: string, data: CreateDevLogData): Promise<{ message: string; entry: DevLogEntry }> =>
     apiClient.post(`/projects/${projectId}/devlog`, data).then(res => res.data),
+  
+  updateDevLogEntry: (projectId: string, entryId: string, data: UpdateDevLogData): Promise<{ message: string; entry: DevLogEntry }> =>
+    apiClient.put(`/projects/${projectId}/devlog/${entryId}`, data).then(res => res.data),
+  
+  deleteDevLogEntry: (projectId: string, entryId: string): Promise<{ message: string }> =>
+    apiClient.delete(`/projects/${projectId}/devlog/${entryId}`).then(res => res.data),
   
   // Links management
   createLink: (projectId: string, data: CreateLinkData): Promise<{ message: string; link: Link }> =>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Project, projectAPI, Todo, DevLogEntry } from '../api/client';
 import CollapsibleSection from '../components/CollapsibleSection';
+import EnhancedTextEditor from '../components/EnhancedTextEditor';
 
 interface ContextType {
   selectedProject: Project | null;
@@ -22,13 +23,91 @@ const NotesPage: React.FC = () => {
   const [newTodo, setNewTodo] = useState('');
   const [newDevLog, setNewDevLog] = useState('');
   
+  // Edit states for todos and dev logs
+  const [editingTodo, setEditingTodo] = useState<string | null>(null);
+  const [editingDevLog, setEditingDevLog] = useState<string | null>(null);
+  const [editTodoText, setEditTodoText] = useState('');
+  const [editDevLogText, setEditDevLogText] = useState('');
+  
   // Loading states
   const [savingNotes, setSavingNotes] = useState(false);
   const [savingGoals, setSavingGoals] = useState(false);
   const [addingTodo, setAddingTodo] = useState(false);
   const [addingDevLog, setAddingDevLog] = useState(false);
+  const [updatingTodo, setUpdatingTodo] = useState(false);
+  const [updatingDevLog, setUpdatingDevLog] = useState(false);
   
   const [error, setError] = useState('');
+
+  // Enhanced markdown to HTML converter
+  const renderMarkdown = (text: string): string => {
+    if (!text) return '<p class="text-gray-500 italic">No notes yet...</p>';
+    
+    let processedText = text;
+    
+    // Helper function to ensure URL has protocol
+    const ensureProtocol = (url: string): string => {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+      }
+      return 'https://' + url;
+    };
+    
+    // Process in order to avoid conflicts
+    
+    // 1. Headers
+    processedText = processedText
+      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-4 mb-2 text-gray-800">$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mt-4 mb-2 text-gray-800">$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-4 mb-2 text-gray-800">$1</h1>');
+    
+    // 2. Code blocks (must come before inline code and links)
+    processedText = processedText
+      .replace(/```([\s\S]*?)```/gim, '<pre class="bg-gray-100 rounded p-3 my-2 overflow-x-auto"><code class="text-sm">$1</code></pre>')
+      .replace(/`([^`]+)`/gim, '<code class="bg-gray-100 px-2 py-1 rounded text-sm">$1</code>');
+    
+    // 3. Markdown-style links [text](url) - process before auto-linking
+    processedText = processedText.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, (match, text, url) => {
+      const fullUrl = ensureProtocol(url);
+      return `<a href="${fullUrl}" class="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    });
+    
+    // 4. Auto-detect plain URLs (avoid URLs already in markdown links or code blocks)
+    processedText = processedText.replace(
+      /(?<!<[^>]*|`[^`]*|\[[^\]]*\]\()[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}(?:\/[^\s<]*)?/gi,
+      (match) => {
+        return `<a href="${ensureProtocol(match)}" class="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">${match}</a>`;
+      }
+    );
+    
+    // 5. Auto-detect URLs starting with http/https
+    processedText = processedText.replace(
+      /(?<!<[^>]*|`[^`]*|\[[^\]]*\]\()https?:\/\/[^\s<]+/gi,
+      (match) => {
+        return `<a href="${match}" class="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">${match}</a>`;
+      }
+    );
+    
+    // 6. Bold and Italic
+    processedText = processedText
+      .replace(/\*\*([^*]+)\*\*/gim, '<strong class="font-semibold">$1</strong>')
+      .replace(/\*([^*]+)\*/gim, '<em class="italic">$1</em>');
+    
+    // 7. Blockquotes
+    processedText = processedText
+      .replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-blue-300 pl-4 my-2 text-gray-700 italic">$1</blockquote>');
+    
+    // 8. Lists
+    processedText = processedText
+      .replace(/^- (.*$)/gim, '<li class="ml-4 list-disc list-inside">$1</li>')
+      .replace(/^\* (.*$)/gim, '<li class="ml-4 list-disc list-inside">$1</li>')
+      .replace(/^\d+\. (.*$)/gim, '<li class="ml-4 list-decimal list-inside">$1</li>');
+    
+    // 9. Line breaks
+    processedText = processedText.replace(/\n/gim, '<br>');
+    
+    return processedText;
+  };
 
   useEffect(() => {
     if (selectedProject) {
@@ -97,6 +176,34 @@ const NotesPage: React.FC = () => {
     }
   };
 
+  const handleEditTodo = (todo: Todo) => {
+    setEditingTodo(todo.id);
+    setEditTodoText(todo.text);
+  };
+
+  const handleSaveTodoEdit = async () => {
+    if (!selectedProject || !editingTodo || !editTodoText.trim()) return;
+    
+    setUpdatingTodo(true);
+    setError('');
+    
+    try {
+      await projectAPI.updateTodo(selectedProject.id, editingTodo, { text: editTodoText.trim() });
+      setEditingTodo(null);
+      setEditTodoText('');
+      await onProjectRefresh();
+    } catch (err) {
+      setError('Failed to update todo');
+    } finally {
+      setUpdatingTodo(false);
+    }
+  };
+
+  const handleCancelTodoEdit = () => {
+    setEditingTodo(null);
+    setEditTodoText('');
+  };
+
   const handleDeleteTodo = async (todoId: string) => {
     if (!selectedProject) return;
     
@@ -122,6 +229,45 @@ const NotesPage: React.FC = () => {
       setError('Failed to add dev log entry');
     } finally {
       setAddingDevLog(false);
+    }
+  };
+
+  const handleEditDevLog = (entry: DevLogEntry) => {
+    setEditingDevLog(entry.id);
+    setEditDevLogText(entry.entry);
+  };
+
+  const handleSaveDevLogEdit = async () => {
+    if (!selectedProject || !editingDevLog || !editDevLogText.trim()) return;
+    
+    setUpdatingDevLog(true);
+    setError('');
+    
+    try {
+      await projectAPI.updateDevLogEntry(selectedProject.id, editingDevLog, { entry: editDevLogText.trim() });
+      setEditingDevLog(null);
+      setEditDevLogText('');
+      await onProjectRefresh();
+    } catch (err) {
+      setError('Failed to update dev log entry');
+    } finally {
+      setUpdatingDevLog(false);
+    }
+  };
+
+  const handleCancelDevLogEdit = () => {
+    setEditingDevLog(null);
+    setEditDevLogText('');
+  };
+
+  const handleDeleteDevLog = async (entryId: string) => {
+    if (!selectedProject) return;
+    
+    try {
+      await projectAPI.deleteDevLogEntry(selectedProject.id, entryId);
+      await onProjectRefresh();
+    } catch (err) {
+      setError('Failed to delete dev log entry');
     }
   };
 
@@ -158,11 +304,11 @@ const NotesPage: React.FC = () => {
         </div>
       )}
 
-      {/* Notes Section */}
+      {/* Notes Section - NOW WITH ENHANCED EDITOR */}
       <CollapsibleSection title="Notes" defaultOpen={true}>
         <div className="mt-4">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Project notes and documentation</p>
+            <p className="text-gray-600">(Markdown supported)</p>
             <div className="flex space-x-2">
               {isEditingNotes ? (
                 <>
@@ -193,68 +339,26 @@ const NotesPage: React.FC = () => {
           </div>
           
           {isEditingNotes ? (
-            <textarea
+            <EnhancedTextEditor
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full h-[70vh] p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              onChange={setNotes}
               placeholder="Enter your project notes here... (Markdown supported)"
             />
           ) : (
-            <div className="min-h-64 p-4 bg-gray-50 rounded-md">
-              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                {notes || 'No notes yet...'}
-              </div>
-            </div>
-          )}
-        </div>
-      </CollapsibleSection>
-
-      {/* Goals Section */}
-      <CollapsibleSection title="Goals & Objectives">
-        <div className="mt-4">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Project goals and milestones</p>
-            <div className="flex space-x-2">
-              {isEditingGoals ? (
-                <>
-                  <button
-                    onClick={() => handleCancel('goals')}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                    disabled={savingGoals}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveGoals}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                    disabled={savingGoals}
-                  >
-                    {savingGoals ? 'Saving...' : 'Save'}
-                  </button>
-                </>
+            <div className="min-h-64 p-4 bg-gray-50 rounded-md border border-gray-200">
+              {notes ? (
+                <div 
+                  className="prose prose-sm max-w-none leading-relaxed"
+                  style={{ lineHeight: '1.2' }}
+                  dangerouslySetInnerHTML={{ 
+                    __html: renderMarkdown(notes) 
+                  }}
+                />
               ) : (
-                <button
-                  onClick={() => setIsEditingGoals(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
-                >
-                  Edit
-                </button>
+                <div className="text-gray-500 italic">
+                  No notes yet. Click Edit to add your project notes with full Markdown support.
+                </div>
               )}
-            </div>
-          </div>
-          
-          {isEditingGoals ? (
-            <textarea
-              value={goals}
-              onChange={(e) => setGoals(e.target.value)}
-              className="w-full h-48 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              placeholder="Enter your project goals and objectives..."
-            />
-          ) : (
-            <div className="min-h-48 p-4 bg-gray-50 rounded-md">
-              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                {goals || 'No goals defined yet...'}
-              </div>
             </div>
           )}
         </div>
@@ -298,18 +402,52 @@ const NotesPage: React.FC = () => {
                     onChange={() => handleToggleTodo(todo)}
                     className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                   />
-                  <span className={`flex-1 ${todo.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
-                    {todo.text}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    {new Date(todo.createdAt).toLocaleDateString()}
-                  </span>
-                  <button
-                    onClick={() => handleDeleteTodo(todo.id)}
-                    className="text-red-600 hover:text-red-800 text-sm"
-                  >
-                    Delete
-                  </button>
+                  
+                  {editingTodo === todo.id ? (
+                    <div className="flex-1 flex gap-2">
+                      <input
+                        type="text"
+                        value={editTodoText}
+                        onChange={(e) => setEditTodoText(e.target.value)}
+                        className="flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onKeyPress={(e) => e.key === 'Enter' && handleSaveTodoEdit()}
+                      />
+                      <button
+                        onClick={handleSaveTodoEdit}
+                        disabled={updatingTodo || !editTodoText.trim()}
+                        className="px-2 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {updatingTodo ? 'Saving...' : 'Save'}
+                      </button>
+                      <button
+                        onClick={handleCancelTodoEdit}
+                        className="px-2 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <span className={`flex-1 ${todo.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                        {todo.text}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {new Date(todo.createdAt).toLocaleDateString()}
+                      </span>
+                      <button
+                        onClick={() => handleEditTodo(todo)}
+                        className="text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTodo(todo.id)}
+                        className="text-red-600 hover:text-red-800 text-sm"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </div>
               ))
             )}
@@ -353,10 +491,50 @@ const NotesPage: React.FC = () => {
                     <span className="text-sm font-medium text-purple-700">
                       {new Date(entry.date).toLocaleDateString()} at {new Date(entry.date).toLocaleTimeString()}
                     </span>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleEditDevLog(entry)}
+                        className="text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteDevLog(entry.id)}
+                        className="text-red-600 hover:text-red-800 text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-gray-700 whitespace-pre-wrap">
-                    {entry.entry}
-                  </div>
+                  
+                  {editingDevLog === entry.id ? (
+                    <div className="space-y-2">
+                      <textarea
+                        value={editDevLogText}
+                        onChange={(e) => setEditDevLogText(e.target.value)}
+                        className="w-full h-20 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      />
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={handleCancelDevLogEdit}
+                          className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveDevLogEdit}
+                          disabled={updatingDevLog || !editDevLogText.trim()}
+                          className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                        >
+                          {updatingDevLog ? 'Saving...' : 'Save'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-gray-700 whitespace-pre-wrap">
+                      {entry.entry}
+                    </div>
+                  )}
                 </div>
               ))
             )}

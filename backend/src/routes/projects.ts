@@ -341,6 +341,69 @@ router.post('/:id/devlog', async (req: AuthRequest, res) => {
   }
 });
 
+// NEW: Update dev log entry
+router.put('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
+  try {
+    const { entry } = req.body;
+    
+    if (!entry || !entry.trim()) {
+      return res.status(400).json({ message: 'Dev log entry is required' });
+    }
+
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const devLogEntry = project.devLog.find(e => e.id === req.params.entryId);
+    if (!devLogEntry) {
+      return res.status(404).json({ message: 'Dev log entry not found' });
+    }
+
+    devLogEntry.entry = entry.trim();
+    await project.save();
+
+    res.json({
+      message: 'Dev log entry updated successfully',
+      entry: devLogEntry
+    });
+  } catch (error) {
+    console.error('Update dev log error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// NEW: Delete dev log entry
+router.delete('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const entryExists = project.devLog.some(e => e.id === req.params.entryId);
+    if (!entryExists) {
+      return res.status(404).json({ message: 'Dev log entry not found' });
+    }
+
+    project.devLog = project.devLog.filter(e => e.id !== req.params.entryId);
+    await project.save();
+
+    res.json({ message: 'Dev log entry deleted successfully' });
+  } catch (error) {
+    console.error('Delete dev log error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Archive/Unarchive project
 router.patch('/:id/archive', async (req: AuthRequest, res) => {
   try {
