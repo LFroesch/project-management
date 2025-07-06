@@ -11,7 +11,7 @@ router.use(requireAuth);
 // Create project
 router.post('/', async (req: AuthRequest, res) => {
   try {
-    const { name, description, notes, stagingEnvironment, color, category, tags } = req.body;
+    const { name, description, stagingEnvironment, color, category, tags } = req.body;
 
     if (!name || !description) {
       return res.status(400).json({ message: 'Name and description are required' });
@@ -20,7 +20,7 @@ router.post('/', async (req: AuthRequest, res) => {
     const project = new Project({
       name: name.trim(),
       description: description.trim(),
-      notes: notes || '',
+      notes: [], // Initialize as empty array
       todos: [],
       devLog: [],
       docs: [],
@@ -151,6 +151,97 @@ router.delete('/:id', async (req: AuthRequest, res) => {
     res.json({ message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Delete project error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// NOTES MANAGEMENT - NEW ROUTES
+router.post('/:id/notes', async (req: AuthRequest, res) => {
+  try {
+    const { title, description, content } = req.body;
+    
+    if (!title || !title.trim() || !content || !content.trim()) {
+      return res.status(400).json({ message: 'Title and content are required' });
+    }
+
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const newNote = {
+      id: uuidv4(),
+      title: title.trim(),
+      description: description?.trim() || '',
+      content: content.trim(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    project.notes.push(newNote);
+    await project.save();
+
+    res.json({
+      message: 'Note added successfully',
+      note: newNote
+    });
+  } catch (error) {
+    console.error('Add note error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.put('/:id/notes/:noteId', async (req: AuthRequest, res) => {
+  try {
+    const { title, description, content } = req.body;
+
+    if (!title || !title.trim() || !content || !content.trim()) {
+      return res.status(400).json({ message: 'Title and content are required' });
+    }
+
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const note = project.notes.find(n => n.id === req.params.noteId);
+    if (!note) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+
+    note.title = title.trim();
+    note.description = description?.trim() || '';
+    note.content = content.trim();
+    note.updatedAt = new Date();
+
+    await project.save();
+
+    res.json({
+      message: 'Note updated successfully',
+      note: note
+    });
+  } catch (error) {
+    console.error('Update note error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/:id/notes/:noteId', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    project.notes = project.notes.filter(n => n.id !== req.params.noteId);
+    await project.save();
+
+    res.json({ message: 'Note deleted successfully' });
+  } catch (error) {
+    console.error('Delete note error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

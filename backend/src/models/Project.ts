@@ -22,6 +22,16 @@ const devLogSchema = new Schema({
   date: { type: Date, default: Date.now }
 });
 
+// NEW: Individual note schema
+const noteSchema = new Schema({
+  id: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String, default: '' },
+  content: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
 const docSchema = new Schema({
   id: { type: String, required: true },
   type: { 
@@ -46,7 +56,7 @@ const linkSchema = new Schema({
   }
 });
 
-// NEW: Tech stack selection schemas
+// Tech stack selection schemas
 const selectedTechSchema = new Schema({
   category: { 
     type: String, 
@@ -78,8 +88,15 @@ export interface IProject extends Document {
   createdAt: Date;
   updatedAt: Date;
   
-  // Notes Section
-  notes: string;
+  // Notes Section - UPDATED: Now an array of individual notes
+  notes: Array<{
+    id: string;
+    title: string;
+    description: string;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
   todos: Array<{
     id: string;
     text: string;
@@ -106,7 +123,7 @@ export interface IProject extends Document {
     updatedAt: Date;
   }>;
   
-  // NEW: Tech Stack & Packages
+  // Tech Stack & Packages
   selectedTechnologies: Array<{
     category: 'styling' | 'database' | 'framework' | 'runtime' | 'deployment' | 'testing' | 'tooling';
     name: string;
@@ -144,18 +161,15 @@ const projectSchema = new Schema<IProject>({
     trim: true
   },
   
-  // Notes Section
-  notes: {
-    type: String,
-    default: ''
-  },
+  // Notes Section - UPDATED: Now an array of individual notes
+  notes: [noteSchema],
   todos: [todoSchema],
   devLog: [devLogSchema],
   
   // Documentation Templates
   docs: [docSchema],
   
-  // NEW: Tech Stack & Packages
+  // Tech Stack & Packages
   selectedTechnologies: [selectedTechSchema],
   selectedPackages: [selectedPackageSchema],
   
