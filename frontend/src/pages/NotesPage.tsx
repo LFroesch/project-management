@@ -158,11 +158,6 @@ const NotesPage: React.FC = () => {
 
   return (
     <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">
-          {selectedProject.name} - Notes & Tasks
-        </h1>
-      </div>
 
       {error && (
         <div className="alert alert-error">

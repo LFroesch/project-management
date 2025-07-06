@@ -204,11 +204,6 @@ const RoadmapPage: React.FC = () => {
 
   return (
     <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">
-          {selectedProject.name} - Tech Stack & Progress
-        </h1>
-      </div>
 
       {error && (
         <div className="alert alert-error">
@@ -224,7 +219,7 @@ const RoadmapPage: React.FC = () => {
       <div className="collapse collapse-arrow bg-base-100 shadow-md">
         <input type="checkbox" defaultChecked />
         <div className="collapse-title text-xl font-medium">
-          🔧 Selected Technologies ({selectedProject.selectedTechnologies?.length || 0})
+          🔧 Selected Stack ({selectedProject.selectedTechnologies?.length || 0})
         </div>
         <div className="collapse-content">
           {selectedProject.selectedTechnologies?.length === 0 ? (

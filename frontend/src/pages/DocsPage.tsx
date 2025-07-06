@@ -25,7 +25,7 @@ const DocsPage: React.FC = () => {
     { value: 'Route', label: 'Route', emoji: '🛣️', description: 'API routes and endpoints' },
     { value: 'API', label: 'API', emoji: '🔌', description: 'API specifications and contracts' },
     { value: 'Util', label: 'Util', emoji: '🔧', description: 'Utility functions and helpers' },
-    { value: 'ENV', label: 'ENV', emoji: '⚙️', description: 'Environment variables and config' },
+    { value: 'ENV', label: 'ENV', emoji: '⚙️', description: 'Environment variables and config, do not commit sensitive keys here, this is for documentation and planning purposes ONLY.' },
     { value: 'Auth', label: 'Auth', emoji: '🔐', description: 'Authentication and authorization' },
     { value: 'Runtime', label: 'Runtime', emoji: '⚡', description: 'Runtime configuration and setup' },
     { value: 'Framework', label: 'Framework', emoji: '🏗️', description: 'Framework setup and structure' }
@@ -134,6 +134,8 @@ verifyToken(token: string): object | null
 validateEmail(email: string): boolean
 sanitizeInput(input: string): string`,
       ENV: `Environment Variables:
+      Reminder: do not commit sensitive keys here, this is for documentatation purposes ONLY.
+      Do not commit environment variables to version control.
 
 # Server
 PORT=5000
@@ -228,12 +230,6 @@ React App:
 
   return (
     <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">
-          {selectedProject.name} - Documentation Templates
-        </h1>
-      </div>
-
       {error && (
         <div className="alert alert-error">
           <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -243,70 +239,74 @@ React App:
         </div>
       )}
 
-      {/* Add New Template */}
-      <div className="card bg-base-100 shadow-md">
-        <div className="card-body">
-          <h2 className="card-title">Create New Documentation Template</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Create New Template - Now Collapsible */}
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          ✨ Create New Documentation Template
+        </div>
+        <div className="collapse-content">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium">Template Type</span>
+                </label>
+                <select
+                  value={newDoc.type}
+                  onChange={(e) => setNewDoc({...newDoc, type: e.target.value as Doc['type']})}
+                  className="select select-bordered border-base-300"
+                >
+                  {docTypes.map(type => (
+                    <option key={type.value} value={type.value}>
+                      {type.emoji} {type.label} - {type.description}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-control md:col-span-2">
+                <label className="label">
+                  <span className="label-text font-medium">Template Title</span>
+                </label>
+                <input
+                  type="text"
+                  value={newDoc.title}
+                  onChange={(e) => setNewDoc({...newDoc, title: e.target.value})}
+                  className="input input-bordered border-base-300"
+                  placeholder="Enter template title..."
+                />
+              </div>
+            </div>
+
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Template Type</span>
+                <span className="label-text font-medium">Template Content</span>
+                <button
+                  type="button"
+                  onClick={() => setNewDoc({...newDoc, content: getTemplateExample(newDoc.type)})}
+                  className="btn btn-xs btn-outline"
+                >
+                  Use Example
+                </button>
               </label>
-              <select
-                value={newDoc.type}
-                onChange={(e) => setNewDoc({...newDoc, type: e.target.value as Doc['type']})}
-                className="select select-bordered border-base-300"
-              >
-                {docTypes.map(type => (
-                  <option key={type.value} value={type.value}>
-                    {type.emoji} {type.label} - {type.description}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-control md:col-span-2">
-              <label className="label">
-                <span className="label-text font-medium">Template Title</span>
-              </label>
-              <input
-                type="text"
-                value={newDoc.title}
-                onChange={(e) => setNewDoc({...newDoc, title: e.target.value})}
-                className="input input-bordered border-base-300"
-                placeholder="Enter template title..."
+              <textarea
+                value={newDoc.content}
+                onChange={(e) => setNewDoc({...newDoc, content: e.target.value})}
+                className="textarea textarea-bordered border-base-300 h-[400px]"
+                placeholder="Enter your pseudocode/planning template..."
               />
             </div>
-          </div>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text font-medium">Template Content</span>
+            <div className="flex justify-end">
               <button
-                type="button"
-                onClick={() => setNewDoc({...newDoc, content: getTemplateExample(newDoc.type)})}
-                className="btn btn-xs btn-outline"
+                onClick={handleAddDoc}
+                disabled={addingDoc || !newDoc.title.trim() || !newDoc.content.trim()}
+                className="btn btn-primary"
               >
-                Use Example
+                {addingDoc ? 'Adding...' : 'Add Template'}
               </button>
-            </label>
-            <textarea
-              value={newDoc.content}
-              onChange={(e) => setNewDoc({...newDoc, content: e.target.value})}
-              className="textarea textarea-bordered border-base-300 h-[400px]"
-              placeholder="Enter your pseudocode/planning template..."
-            />
-          </div>
-
-          <div className="card-actions justify-end">
-            <button
-              onClick={handleAddDoc}
-              disabled={addingDoc || !newDoc.title.trim() || !newDoc.content.trim()}
-              className="btn btn-primary"
-            >
-              {addingDoc ? 'Adding...' : 'Add Template'}
-            </button>
+            </div>
           </div>
         </div>
       </div>
