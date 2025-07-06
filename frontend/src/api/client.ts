@@ -32,13 +32,13 @@ export interface DevLogEntry {
   date: string;
 }
 
-export interface Phase {
+export interface Doc {
   id: string;
-  name: string;
-  description: string;
-  status: 'not-started' | 'in-progress' | 'completed';
-  startDate?: string;
-  endDate?: string;
+  type: 'Model' | 'Route' | 'API' | 'Util' | 'ENV' | 'Auth' | 'Runtime' | 'Framework';
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Link {
@@ -53,23 +53,15 @@ export interface Project {
   name: string;
   description: string;
   
-  // Enhanced Notes Section
+  // Notes Section
   notes: string;
-  goals: string;
   todos: Todo[];
   devLog: DevLogEntry[];
   
-  // Enhanced Roadmap Section
-  roadmap: string;
-  phases: Phase[];
+  // NEW: Documentation Templates
+  docs: Doc[];
   
-  // Enhanced Documentation Section
-  apiDocs: string;
-  technicalDocs: string;
-  userDocs: string;
-  codeDocs: string;
-  
-  // Enhanced Settings Section
+  // Settings Section
   stagingEnvironment: 'development' | 'staging' | 'production';
   links: Link[];
   color: string;
@@ -109,12 +101,6 @@ export interface CreateProjectData {
   name: string;
   description: string;
   notes?: string;
-  goals?: string;
-  roadmap?: string;
-  apiDocs?: string;
-  technicalDocs?: string;
-  userDocs?: string;
-  codeDocs?: string;
   stagingEnvironment?: 'development' | 'staging' | 'production';
   color?: string;
   category?: string;
@@ -125,12 +111,6 @@ export interface UpdateProjectData {
   name?: string;
   description?: string;
   notes?: string;
-  goals?: string;
-  roadmap?: string;
-  apiDocs?: string;
-  technicalDocs?: string;
-  userDocs?: string;
-  codeDocs?: string;
   stagingEnvironment?: 'development' | 'staging' | 'production';
   color?: string;
   category?: string;
@@ -160,6 +140,18 @@ export interface UpdateDevLogData {
   title?: string;
   description?: string;
   entry: string;
+}
+
+export interface CreateDocData {
+  type: 'Model' | 'Route' | 'API' | 'Util' | 'ENV' | 'Auth' | 'Runtime' | 'Framework';
+  title: string;
+  content: string;
+}
+
+export interface UpdateDocData {
+  type?: 'Model' | 'Route' | 'API' | 'Util' | 'ENV' | 'Auth' | 'Runtime' | 'Framework';
+  title?: string;
+  content?: string;
 }
 
 export interface CreateLinkData {
@@ -220,6 +212,16 @@ export const projectAPI = {
   
   deleteDevLogEntry: (projectId: string, entryId: string): Promise<{ message: string }> =>
     apiClient.delete(`/projects/${projectId}/devlog/${entryId}`).then(res => res.data),
+  
+  // NEW: Docs management
+  createDoc: (projectId: string, data: CreateDocData): Promise<{ message: string; doc: Doc }> =>
+    apiClient.post(`/projects/${projectId}/docs`, data).then(res => res.data),
+  
+  updateDoc: (projectId: string, docId: string, data: UpdateDocData): Promise<{ message: string; doc: Doc }> =>
+    apiClient.put(`/projects/${projectId}/docs/${docId}`, data).then(res => res.data),
+  
+  deleteDoc: (projectId: string, docId: string): Promise<{ message: string }> =>
+    apiClient.delete(`/projects/${projectId}/docs/${docId}`).then(res => res.data),
   
   // Links management
   createLink: (projectId: string, data: CreateLinkData): Promise<{ message: string; link: Link }> =>

@@ -170,7 +170,7 @@ const NewDevLogForm: React.FC<NewDevLogFormProps> = ({ projectId, onAdd }) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             style={{ fontSize: '16px' }}
-            className="input input-bordered w-full"
+            className="input input-bordered border-base-300 w-full"
             placeholder="Dev log title..."
             required
           />
@@ -178,7 +178,7 @@ const NewDevLogForm: React.FC<NewDevLogFormProps> = ({ projectId, onAdd }) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             style={{ fontSize: '16px' }}
-            className="textarea textarea-bordered w-full"
+            className="textarea textarea-bordered border-base-300 w-full"
             placeholder="Dev log description..."
             rows={4}
           />

@@ -1,0 +1,43 @@
+# Notes / To Do
+- remove goals from db model
+
+# Stack / Progress
+- Roadmap -> Stack / Progress
+- Make selectable / interactable / options for framework, warns of compatibilities
+- Development Phases -> Progress Checkpoints (Different for different types of projects, templated)
+
+# Docs / Features
+- Remove docs from db model, replace with docs array
+- Add Button to create a Model / Route (Group) / API / Util / ENV / Auth / Runtime / Framework etc. which is an array itself inside the docs array
+- each of these creates a template for you to fill out to plan out these things, also has a description field for explaining each thing
+- Separate into backend / frontend / mobile / desktop sections (toggle which you're using)
+
+# Settings / Info
+- Editable Links
+
+# Account Settings
+- Save Theme to user db
+
+# Main/Layout
+- Search Functionality
+- Email Verification/PasswordResetting
+- More contrast / better UX, still clean 
+
+# Sharing
+- Can invite someone to a project (make it shared) during project creation / while its already a project (moving it to shared, option within settings page)
+- If its a shared project you can delete yourself from it, if you are the last person, it deletes itself
+- Add users_shared_with to schema etc
+- API to "send" and "receive" projects to and from other users
+
+# Future Features
+- AI assistant
+- Export your info as a doc for going from prototyping -> start of project
+- Above / except boilerplate code
+- Notifications? / Reminders? / Analytics? Some sort of achievement/reward bar xp system or something
+- activity heatmap ?
+- RESET PASSWORD / EMAIL VERIFICATION
+
+Voice-Memo-Transcriber
+Fix up the UI
+Format the output a little better
+Prompt to reset chat on open

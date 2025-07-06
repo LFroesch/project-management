@@ -232,7 +232,7 @@ const NewTodoForm: React.FC<NewTodoFormProps> = ({ projectId, onAdd }) => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="input input-bordered w-full"
+            className="input input-bordered border-base-300 w-full"
             style={{ fontSize: '18px' }}
             placeholder="Todo title..."
             required
@@ -240,7 +240,7 @@ const NewTodoForm: React.FC<NewTodoFormProps> = ({ projectId, onAdd }) => {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="textarea textarea-bordered w-full"
+            className="textarea textarea-bordered border-base-300 w-full"
             style={{ fontSize: '18px' }}
             placeholder="Todo description (optional)..."
             rows={3}
@@ -250,7 +250,7 @@ const NewTodoForm: React.FC<NewTodoFormProps> = ({ projectId, onAdd }) => {
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="select select-bordered select-sm"
+              className="select select-bordered border-base-300 select-sm"
               style={{ fontSize: '16px' }}
             >
               <option value="low">🌱 Low</option>

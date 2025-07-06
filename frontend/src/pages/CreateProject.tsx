@@ -40,13 +40,6 @@ const CreateProject: React.FC = () => {
         color: formData.color,
         tags: formData.tags,
         stagingEnvironment: formData.stagingEnvironment,
-        notes: '',
-        goals: '',
-        roadmap: '',
-        apiDocs: '',
-        technicalDocs: '',
-        userDocs: '',
-        codeDocs: ''
       });
       navigate('/');
     } catch (err) {

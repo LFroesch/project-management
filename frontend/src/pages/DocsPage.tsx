@@ -1,109 +1,210 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Project } from '../api/client';
+import { Project, Doc, projectAPI } from '../api/client';
 
 interface ContextType {
   selectedProject: Project | null;
-  onProjectUpdate: (projectId: string, updatedData: any) => Promise<any>;
+  onProjectRefresh: () => Promise<void>;
 }
 
 const DocsPage: React.FC = () => {
-  const { selectedProject, onProjectUpdate } = useOutletContext<ContextType>();
+  const { selectedProject, onProjectRefresh } = useOutletContext<ContextType>();
   
-  // Edit states
-  const [isEditingApiDocs, setIsEditingApiDocs] = useState(false);
-  const [isEditingTechnicalDocs, setIsEditingTechnicalDocs] = useState(false);
-  const [isEditingUserDocs, setIsEditingUserDocs] = useState(false);
-  const [isEditingCodeDocs, setIsEditingCodeDocs] = useState(false);
-  
-  // Form data
-  const [apiDocs, setApiDocs] = useState('');
-  const [technicalDocs, setTechnicalDocs] = useState('');
-  const [userDocs, setUserDocs] = useState('');
-  const [codeDocs, setCodeDocs] = useState('');
-  
-  // Loading states
-  const [savingApi, setSavingApi] = useState(false);
-  const [savingTechnical, setSavingTechnical] = useState(false);
-  const [savingUser, setSavingUser] = useState(false);
-  const [savingCode, setSavingCode] = useState(false);
-  
+  const [newDoc, setNewDoc] = useState({
+    type: 'Model' as Doc['type'],
+    title: '',
+    content: ''
+  });
+  const [addingDoc, setAddingDoc] = useState(false);
+  const [editingDoc, setEditingDoc] = useState<string | null>(null);
+  const [editData, setEditData] = useState({ type: 'Model' as Doc['type'], title: '', content: '' });
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (selectedProject) {
-      setApiDocs(selectedProject.apiDocs || '');
-      setTechnicalDocs(selectedProject.technicalDocs || '');
-      setUserDocs(selectedProject.userDocs || '');
-      setCodeDocs(selectedProject.codeDocs || '');
-    }
-  }, [selectedProject]);
+  const docTypes: Array<{ value: Doc['type']; label: string; emoji: string; description: string }> = [
+    { value: 'Model', label: 'Model', emoji: '🗃️', description: 'Database models and schemas' },
+    { value: 'Route', label: 'Route', emoji: '🛣️', description: 'API routes and endpoints' },
+    { value: 'API', label: 'API', emoji: '🔌', description: 'API specifications and contracts' },
+    { value: 'Util', label: 'Util', emoji: '🔧', description: 'Utility functions and helpers' },
+    { value: 'ENV', label: 'ENV', emoji: '⚙️', description: 'Environment variables and config' },
+    { value: 'Auth', label: 'Auth', emoji: '🔐', description: 'Authentication and authorization' },
+    { value: 'Runtime', label: 'Runtime', emoji: '⚡', description: 'Runtime configuration and setup' },
+    { value: 'Framework', label: 'Framework', emoji: '🏗️', description: 'Framework setup and structure' }
+  ];
 
-  const handleSave = async (section: string) => {
-    if (!selectedProject) return;
+  const getTypeInfo = (type: Doc['type']) => {
+    return docTypes.find(t => t.value === type) || docTypes[0];
+  };
 
-    const updates: any = {};
-    let setSaving: (loading: boolean) => void;
-    let setEditing: (editing: boolean) => void;
+  const handleAddDoc = async () => {
+    if (!selectedProject || !newDoc.title.trim() || !newDoc.content.trim()) return;
 
-    switch (section) {
-      case 'api':
-        updates.apiDocs = apiDocs;
-        setSaving = setSavingApi;
-        setEditing = setIsEditingApiDocs;
-        break;
-      case 'technical':
-        updates.technicalDocs = technicalDocs;
-        setSaving = setSavingTechnical;
-        setEditing = setIsEditingTechnicalDocs;
-        break;
-      case 'user':
-        updates.userDocs = userDocs;
-        setSaving = setSavingUser;
-        setEditing = setIsEditingUserDocs;
-        break;
-      case 'code':
-        updates.codeDocs = codeDocs;
-        setSaving = setSavingCode;
-        setEditing = setIsEditingCodeDocs;
-        break;
-      default:
-        return;
-    }
-
-    setSaving(true);
+    setAddingDoc(true);
     setError('');
 
     try {
-      await onProjectUpdate(selectedProject.id, updates);
-      setEditing(false);
+      await projectAPI.createDoc(selectedProject.id, newDoc);
+      setNewDoc({ type: 'Model', title: '', content: '' });
+      await onProjectRefresh();
     } catch (err) {
-      setError(`Failed to save ${section} documentation`);
+      setError('Failed to add documentation template');
     } finally {
-      setSaving(false);
+      setAddingDoc(false);
     }
   };
 
-  const handleCancel = (section: string) => {
-    switch (section) {
-      case 'api':
-        setApiDocs(selectedProject?.apiDocs || '');
-        setIsEditingApiDocs(false);
-        break;
-      case 'technical':
-        setTechnicalDocs(selectedProject?.technicalDocs || '');
-        setIsEditingTechnicalDocs(false);
-        break;
-      case 'user':
-        setUserDocs(selectedProject?.userDocs || '');
-        setIsEditingUserDocs(false);
-        break;
-      case 'code':
-        setCodeDocs(selectedProject?.codeDocs || '');
-        setIsEditingCodeDocs(false);
-        break;
+  const handleEditDoc = (doc: Doc) => {
+    setEditingDoc(doc.id);
+    setEditData({ type: doc.type, title: doc.title, content: doc.content });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!selectedProject || !editingDoc) return;
+
+    try {
+      await projectAPI.updateDoc(selectedProject.id, editingDoc, editData);
+      setEditingDoc(null);
+      await onProjectRefresh();
+    } catch (err) {
+      setError('Failed to update documentation template');
     }
-    setError('');
+  };
+
+  const handleDeleteDoc = async (docId: string) => {
+    if (!selectedProject) return;
+
+    try {
+      await projectAPI.deleteDoc(selectedProject.id, docId);
+      await onProjectRefresh();
+    } catch (err) {
+      setError('Failed to delete documentation template');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingDoc(null);
+    setEditData({ type: 'Model', title: '', content: '' });
+  };
+
+  const getTemplateExample = (type: Doc['type']): string => {
+    const examples = {
+      Model: `User Model:
+- id: ObjectId (primary key)
+- email: String (unique, required)
+- password: String (hashed, required)
+- firstName: String (required)
+- lastName: String (required)
+- createdAt: Date (auto)
+- updatedAt: Date (auto)`,
+      Route: `Auth Routes:
+POST /api/auth/login
+- Body: { email, password }
+- Response: { user, token }
+
+POST /api/auth/register  
+- Body: { email, password, firstName, lastName }
+- Response: { user, token }
+
+GET /api/auth/me
+- Headers: Authorization Bearer token
+- Response: { user }`,
+      API: `User API Specification:
+
+GET /api/users
+- Query: ?page=1&limit=10&search=john
+- Response: { users: [], total, page, limit }
+
+POST /api/users
+- Body: { email, firstName, lastName }
+- Response: { user, message }
+
+PUT /api/users/:id
+- Body: { firstName?, lastName? }
+- Response: { user, message }`,
+      Util: `Utility Functions:
+
+// Password hashing
+hashPassword(password: string): Promise<string>
+comparePassword(password: string, hash: string): Promise<boolean>
+
+// JWT tokens
+generateToken(payload: object): string
+verifyToken(token: string): object | null
+
+// Validation
+validateEmail(email: string): boolean
+sanitizeInput(input: string): string`,
+      ENV: `Environment Variables:
+
+# Server
+PORT=5000
+NODE_ENV=development
+
+# Database
+MONGODB_URI=mongodb://localhost:27017/myapp
+DB_NAME=myapp
+
+# Authentication
+JWT_SECRET=your-super-secret-key
+JWT_EXPIRES_IN=7d
+
+# External Services
+SENDGRID_API_KEY=your-sendgrid-key
+AWS_S3_BUCKET=your-bucket-name`,
+      Auth: `Authentication Strategy:
+
+Middleware:
+- requireAuth: Verify JWT token
+- requireAdmin: Check admin role
+- rateLimiter: Prevent brute force
+
+JWT Implementation:
+- Access token: 15 minutes
+- Refresh token: 7 days
+- Store refresh tokens in DB
+- Blacklist on logout
+
+Password Policy:
+- Minimum 8 characters
+- Require uppercase, lowercase, number
+- Hash with bcrypt (12 rounds)`,
+      Runtime: `Runtime Configuration:
+
+Node.js Setup:
+- Version: 18+ LTS
+- Package manager: npm/yarn
+- Process manager: PM2
+
+Development:
+- Hot reload: nodemon
+- Debugging: VS Code debugger
+- Linting: ESLint + Prettier
+
+Production:
+- Reverse proxy: Nginx
+- SSL: Let's Encrypt
+- Monitoring: Winston logging
+- Health checks: /health endpoint`,
+      Framework: `Framework Structure:
+
+Express.js App:
+/src
+  /controllers  - Route handlers
+  /middleware   - Custom middleware
+  /models       - Database models
+  /routes       - API routes
+  /utils        - Helper functions
+  /config       - Configuration files
+  /types        - TypeScript types
+
+React App:
+/src
+  /components   - Reusable UI components
+  /pages        - Page components
+  /hooks        - Custom hooks
+  /utils        - Helper functions
+  /types        - TypeScript interfaces`
+    };
+    return examples[type] || '';
   };
 
   if (!selectedProject) {
@@ -112,17 +213,24 @@ const DocsPage: React.FC = () => {
         <div className="text-center">
           <div className="text-6xl mb-4">📚</div>
           <h2 className="text-2xl font-bold mb-2">Select a project</h2>
-          <p className="text-base-content/60">Choose a project from the sidebar to view documentation</p>
+          <p className="text-base-content/60">Choose a project from the sidebar to view documentation templates</p>
         </div>
       </div>
     );
   }
 
+  // Group docs by type
+  const docsByType = selectedProject.docs.reduce((acc, doc) => {
+    if (!acc[doc.type]) acc[doc.type] = [];
+    acc[doc.type].push(doc);
+    return acc;
+  }, {} as Record<Doc['type'], Doc[]>);
+
   return (
     <div className="p-8 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">
-          {selectedProject.name} - Documentation
+          {selectedProject.name} - Documentation Templates
         </h1>
       </div>
 
@@ -135,326 +243,197 @@ const DocsPage: React.FC = () => {
         </div>
       )}
 
-      {/* API Documentation Section */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
-        <input type="checkbox" defaultChecked />
-        <div className="collapse-title text-xl font-medium">
-          🔌 API Documentation {apiDocs && '(Has Content)'}
-        </div>
-        <div className="collapse-content">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-base-content/60">API endpoints, request/response examples, and authentication</p>
-            <div className="flex space-x-2">
-              {isEditingApiDocs ? (
-                <>
-                  <button
-                    onClick={() => handleCancel('api')}
-                    className="btn btn-ghost btn-sm"
-                    disabled={savingApi}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleSave('api')}
-                    className="btn btn-primary btn-sm"
-                    disabled={savingApi}
-                  >
-                    {savingApi ? 'Saving...' : 'Save'}
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setIsEditingApiDocs(true)}
-                  className="btn btn-outline btn-sm"
-                >
-                  Edit
-                </button>
-              )}
+      {/* Add New Template */}
+      <div className="card bg-base-100 shadow-md">
+        <div className="card-body">
+          <h2 className="card-title">Create New Documentation Template</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Template Type</span>
+              </label>
+              <select
+                value={newDoc.type}
+                onChange={(e) => setNewDoc({...newDoc, type: e.target.value as Doc['type']})}
+                className="select select-bordered border-base-300"
+              >
+                {docTypes.map(type => (
+                  <option key={type.value} value={type.value}>
+                    {type.emoji} {type.label} - {type.description}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-control md:col-span-2">
+              <label className="label">
+                <span className="label-text font-medium">Template Title</span>
+              </label>
+              <input
+                type="text"
+                value={newDoc.title}
+                onChange={(e) => setNewDoc({...newDoc, title: e.target.value})}
+                className="input input-bordered border-base-300"
+                placeholder="Enter template title..."
+              />
             </div>
           </div>
 
-          {isEditingApiDocs ? (
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Template Content</span>
+              <button
+                type="button"
+                onClick={() => setNewDoc({...newDoc, content: getTemplateExample(newDoc.type)})}
+                className="btn btn-xs btn-outline"
+              >
+                Use Example
+              </button>
+            </label>
             <textarea
-              value={apiDocs}
-              onChange={(e) => setApiDocs(e.target.value)}
-              className="textarea textarea-bordered w-full h-64 resize-none font-mono"
-              placeholder="Document your API endpoints here..."
+              value={newDoc.content}
+              onChange={(e) => setNewDoc({...newDoc, content: e.target.value})}
+              className="textarea textarea-bordered border-base-300 h-[400px]"
+              placeholder="Enter your pseudocode/planning template..."
             />
-          ) : (
-            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
-              {apiDocs ? (
-                <div className="whitespace-pre-wrap font-mono text-sm leading-relaxed">
-                  {apiDocs}
-                </div>
-              ) : (
-                <div className="text-base-content/60 italic">
-                  No API documentation yet. Click Edit to add documentation for your endpoints.
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Technical Documentation Section */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
-        <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          🔧 Technical Documentation {technicalDocs && '(Has Content)'}
-        </div>
-        <div className="collapse-content">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-base-content/60">Architecture, setup guides, and technical specifications</p>
-            <div className="flex space-x-2">
-              {isEditingTechnicalDocs ? (
-                <>
-                  <button
-                    onClick={() => handleCancel('technical')}
-                    className="btn btn-ghost btn-sm"
-                    disabled={savingTechnical}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleSave('technical')}
-                    className="btn btn-primary btn-sm"
-                    disabled={savingTechnical}
-                  >
-                    {savingTechnical ? 'Saving...' : 'Save'}
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setIsEditingTechnicalDocs(true)}
-                  className="btn btn-outline btn-sm"
-                >
-                  Edit
-                </button>
-              )}
-            </div>
           </div>
 
-          {isEditingTechnicalDocs ? (
-            <textarea
-              value={technicalDocs}
-              onChange={(e) => setTechnicalDocs(e.target.value)}
-              className="textarea textarea-bordered w-full h-64 resize-none"
-              placeholder="Document your technical architecture and setup instructions here..."
-            />
-          ) : (
-            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
-              {technicalDocs ? (
-                <div className="whitespace-pre-wrap leading-relaxed">
-                  {technicalDocs}
-                </div>
-              ) : (
-                <div className="text-base-content/60 italic">
-                  No technical documentation yet. Click Edit to add architecture and setup guides.
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* User Documentation Section */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
-        <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          👥 User Documentation {userDocs && '(Has Content)'}
-        </div>
-        <div className="collapse-content">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-base-content/60">User guides, how-to instructions, and feature explanations</p>
-            <div className="flex space-x-2">
-              {isEditingUserDocs ? (
-                <>
-                  <button
-                    onClick={() => handleCancel('user')}
-                    className="btn btn-ghost btn-sm"
-                    disabled={savingUser}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleSave('user')}
-                    className="btn btn-primary btn-sm"
-                    disabled={savingUser}
-                  >
-                    {savingUser ? 'Saving...' : 'Save'}
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setIsEditingUserDocs(true)}
-                  className="btn btn-outline btn-sm"
-                >
-                  Edit
-                </button>
-              )}
-            </div>
-          </div>
-
-          {isEditingUserDocs ? (
-            <textarea
-              value={userDocs}
-              onChange={(e) => setUserDocs(e.target.value)}
-              className="textarea textarea-bordered w-full h-64 resize-none"
-              placeholder="Document user guides and how-to instructions here..."
-            />
-          ) : (
-            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
-              {userDocs ? (
-                <div className="whitespace-pre-wrap leading-relaxed">
-                  {userDocs}
-                </div>
-              ) : (
-                <div className="text-base-content/60 italic">
-                  No user documentation yet. Click Edit to add user guides and instructions.
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Code Documentation Section */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
-        <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          💻 Code Documentation {codeDocs && '(Has Content)'}
-        </div>
-        <div className="collapse-content">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-base-content/60">Code standards, conventions, and development guidelines</p>
-            <div className="flex space-x-2">
-              {isEditingCodeDocs ? (
-                <>
-                  <button
-                    onClick={() => handleCancel('code')}
-                    className="btn btn-ghost btn-sm"
-                    disabled={savingCode}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleSave('code')}
-                    className="btn btn-primary btn-sm"
-                    disabled={savingCode}
-                  >
-                    {savingCode ? 'Saving...' : 'Save'}
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setIsEditingCodeDocs(true)}
-                  className="btn btn-outline btn-sm"
-                >
-                  Edit
-                </button>
-              )}
-            </div>
-          </div>
-
-          {isEditingCodeDocs ? (
-            <textarea
-              value={codeDocs}
-              onChange={(e) => setCodeDocs(e.target.value)}
-              className="textarea textarea-bordered w-full h-64 resize-none"
-              placeholder="Document your code standards and development guidelines here..."
-            />
-          ) : (
-            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
-              {codeDocs ? (
-                <div className="whitespace-pre-wrap leading-relaxed">
-                  {codeDocs}
-                </div>
-              ) : (
-                <div className="text-base-content/60 italic">
-                  No code documentation yet. Click Edit to add coding standards and guidelines.
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Documentation Templates Section */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
-        <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          📋 Documentation Templates
-        </div>
-        <div className="collapse-content">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-info/10 rounded-lg border border-info/20">
-              <h4 className="font-semibold text-info mb-2">API Endpoint Template</h4>
-              <pre className="text-xs text-info/80 overflow-x-auto">
-{`## POST /api/endpoint
-Description: Brief description
-
-Request:
-{
-  "field": "value"
-}
-
-Response:
-{
-  "message": "Success",
-  "data": {}
-}`}
-              </pre>
-            </div>
-
-            <div className="p-4 bg-success/10 rounded-lg border border-success/20">
-              <h4 className="font-semibold text-success mb-2">Setup Guide Template</h4>
-              <pre className="text-xs text-success/80 overflow-x-auto">
-{`## Installation
-1. Clone repository
-2. Install dependencies
-3. Configure environment
-4. Run application
-
-## Requirements
-- Node.js 18+
-- MongoDB 6+
-- npm/yarn`}
-              </pre>
-            </div>
-
-            <div className="p-4 bg-secondary/10 rounded-lg border border-secondary/20">
-              <h4 className="font-semibold text-secondary mb-2">User Guide Template</h4>
-              <pre className="text-xs text-secondary/80 overflow-x-auto">
-{`## How to [Task]
-1. Navigate to [page]
-2. Click [button]
-3. Fill in [form]
-4. Submit
-
-## Tips
-- Remember to...
-- You can also...`}
-              </pre>
-            </div>
-
-            <div className="p-4 bg-warning/10 rounded-lg border border-warning/20">
-              <h4 className="font-semibold text-warning mb-2">Code Standards Template</h4>
-              <pre className="text-xs text-warning/80 overflow-x-auto">
-{`## Naming Conventions
-- Variables: camelCase
-- Functions: camelCase
-- Classes: PascalCase
-- Constants: UPPER_CASE
-
-## File Structure
-- Components: /components
-- Pages: /pages
-- Utils: /utils`}
-              </pre>
-            </div>
+          <div className="card-actions justify-end">
+            <button
+              onClick={handleAddDoc}
+              disabled={addingDoc || !newDoc.title.trim() || !newDoc.content.trim()}
+              className="btn btn-primary"
+            >
+              {addingDoc ? 'Adding...' : 'Add Template'}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Template Categories */}
+      {docTypes.map(typeInfo => {
+        const docs = docsByType[typeInfo.value] || [];
+        return (
+          <div key={typeInfo.value} className="collapse collapse-arrow bg-base-100 shadow-md">
+            <input type="checkbox" defaultChecked={docs.length > 0} />
+            <div className="collapse-title text-xl font-medium">
+              {typeInfo.emoji} {typeInfo.label} Templates ({docs.length})
+              <div className="text-sm text-base-content/60 font-normal mt-1">
+                {typeInfo.description}
+              </div>
+            </div>
+            <div className="collapse-content">
+              {docs.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-4">{typeInfo.emoji}</div>
+                  <p className="text-base-content/60">No {typeInfo.label.toLowerCase()} templates yet.</p>
+                  <p className="text-base-content/50 text-sm mt-2">{typeInfo.description}</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {docs.map(doc => (
+                    <div key={doc.id} className="card bg-base-200 shadow-sm">
+                      <div className="card-body p-4">
+                        {editingDoc === doc.id ? (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div className="form-control">
+                                <label className="label">
+                                  <span className="label-text font-medium">Type</span>
+                                </label>
+                                <select
+                                  value={editData.type}
+                                  onChange={(e) => setEditData({...editData, type: e.target.value as Doc['type']})}
+                                  className="select select-bordered select-sm"
+                                >
+                                  {docTypes.map(type => (
+                                    <option key={type.value} value={type.value}>
+                                      {type.emoji} {type.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="form-control md:col-span-2">
+                                <label className="label">
+                                  <span className="label-text font-medium">Title</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  value={editData.title}
+                                  onChange={(e) => setEditData({...editData, title: e.target.value})}
+                                  className="input input-bordered input-sm"
+                                />
+                              </div>
+                            </div>
+                            <div className="form-control">
+                              <label className="label">
+                                <span className="label-text font-medium">Content</span>
+                              </label>
+                              <textarea
+                                value={editData.content}
+                                onChange={(e) => setEditData({...editData, content: e.target.value})}
+                                className="textarea textarea-bordered h-[500px]"
+                              />
+                            </div>
+                            <div className="flex justify-end gap-2">
+                              <button onClick={handleCancelEdit} className="btn btn-ghost btn-sm">
+                                Cancel
+                              </button>
+                              <button onClick={handleSaveEdit} className="btn btn-primary btn-sm">
+                                Save
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex items-start justify-between mb-3">
+                              <div>
+                                <h3 className="font-semibold text-lg">{doc.title}</h3>
+                                <div className="text-xs text-base-content/50">
+                                  Created: {new Date(doc.createdAt).toLocaleDateString()}
+                                  {doc.updatedAt !== doc.createdAt && (
+                                    <> • Updated: {new Date(doc.updatedAt).toLocaleDateString()}</>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleEditDoc(doc)}
+                                  className="btn btn-sm btn-ghost"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteDoc(doc.id)}
+                                  className="btn btn-sm btn-error btn-outline"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                            <div className="bg-base-100 rounded p-4 border border-base-300">
+                              <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                                {doc.content}
+                              </pre>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

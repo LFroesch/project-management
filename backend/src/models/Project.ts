@@ -22,17 +22,17 @@ const devLogSchema = new Schema({
   date: { type: Date, default: Date.now }
 });
 
-const phaseSchema = new Schema({
+const docSchema = new Schema({
   id: { type: String, required: true },
-  name: { type: String, required: true },
-  description: { type: String, default: '' },
-  status: { 
+  type: { 
     type: String, 
-    enum: ['not-started', 'in-progress', 'completed'],
-    default: 'not-started'
+    enum: ['Model', 'Route', 'API', 'Util', 'ENV', 'Auth', 'Runtime', 'Framework'],
+    required: true
   },
-  startDate: { type: Date },
-  endDate: { type: Date }
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
 
 const linkSchema = new Schema({
@@ -47,7 +47,7 @@ const linkSchema = new Schema({
 });
 
 export interface IProject extends Document {
-  // Existing fields
+  // Basic fields
   name: string;
   description: string;
   userId: mongoose.Types.ObjectId;
@@ -56,9 +56,8 @@ export interface IProject extends Document {
   createdAt: Date;
   updatedAt: Date;
   
-  // Enhanced Notes Section
-  notes: string; // Now supports markdown
-  goals: string;
+  // Notes Section
+  notes: string; // Still supports markdown
   todos: Array<{
     id: string;
     text: string;
@@ -75,24 +74,17 @@ export interface IProject extends Document {
     date: Date;
   }>;
   
-  // Enhanced Roadmap Section
-  roadmap: string;
-  phases: Array<{
+  // NEW: Structured Documentation Templates
+  docs: Array<{
     id: string;
-    name: string;
-    description: string;
-    status: 'not-started' | 'in-progress' | 'completed';
-    startDate?: Date;
-    endDate?: Date;
+    type: 'Model' | 'Route' | 'API' | 'Util' | 'ENV' | 'Auth' | 'Runtime' | 'Framework';
+    title: string;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
   }>;
   
-  // Enhanced Documentation Section
-  apiDocs: string;
-  technicalDocs: string;
-  userDocs: string;
-  codeDocs: string;
-  
-  // Enhanced Settings Section
+  // Settings Section
   stagingEnvironment: 'development' | 'staging' | 'production';
   links: Array<{
     id: string;
@@ -117,44 +109,18 @@ const projectSchema = new Schema<IProject>({
     trim: true
   },
   
-  // Enhanced Notes Section
+  // Notes Section
   notes: {
-    type: String,
-    default: ''
-  },
-  goals: {
     type: String,
     default: ''
   },
   todos: [todoSchema],
   devLog: [devLogSchema],
   
-  // Enhanced Roadmap Section
-  roadmap: {
-    type: String,
-    default: ''
-  },
-  phases: [phaseSchema],
+  // NEW: Structured Documentation Templates
+  docs: [docSchema],
   
-  // Enhanced Documentation Section
-  apiDocs: {
-    type: String,
-    default: ''
-  },
-  technicalDocs: {
-    type: String,
-    default: ''
-  },
-  userDocs: {
-    type: String,
-    default: ''
-  },
-  codeDocs: {
-    type: String,
-    default: ''
-  },
-  
-  // Enhanced Settings Section
+  // Settings Section
   stagingEnvironment: {
     type: String,
     enum: ['development', 'staging', 'production'],

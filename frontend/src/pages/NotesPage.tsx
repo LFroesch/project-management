@@ -14,17 +14,14 @@ interface ContextType {
 const NotesPage: React.FC = () => {
   const { selectedProject, onProjectUpdate, onProjectRefresh } = useOutletContext<ContextType>();
   
-  // Edit states for different sections
+  // Edit states
   const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [isEditingGoals, setIsEditingGoals] = useState(false);
   
   // Form data
   const [notes, setNotes] = useState('');
-  const [goals, setGoals] = useState('');
   
   // Loading states
   const [savingNotes, setSavingNotes] = useState(false);
-  const [savingGoals, setSavingGoals] = useState(false);
   
   const [error, setError] = useState('');
 
@@ -101,7 +98,6 @@ const NotesPage: React.FC = () => {
   useEffect(() => {
     if (selectedProject) {
       setNotes(selectedProject.notes || '');
-      setGoals(selectedProject.goals || '');
     }
   }, [selectedProject]);
 
@@ -118,22 +114,6 @@ const NotesPage: React.FC = () => {
       setError('Failed to save notes');
     } finally {
       setSavingNotes(false);
-    }
-  };
-
-  const handleSaveGoals = async () => {
-    if (!selectedProject) return;
-    
-    setSavingGoals(true);
-    setError('');
-    
-    try {
-      await onProjectUpdate(selectedProject.id, { goals });
-      setIsEditingGoals(false);
-    } catch (err) {
-      setError('Failed to save goals');
-    } finally {
-      setSavingGoals(false);
     }
   };
 
@@ -158,14 +138,9 @@ const NotesPage: React.FC = () => {
     }
   };
 
-  const handleCancel = (section: string) => {
-    if (section === 'notes') {
-      setNotes(selectedProject?.notes || '');
-      setIsEditingNotes(false);
-    } else if (section === 'goals') {
-      setGoals(selectedProject?.goals || '');
-      setIsEditingGoals(false);
-    }
+  const handleCancel = () => {
+    setNotes(selectedProject?.notes || '');
+    setIsEditingNotes(false);
     setError('');
   };
 
@@ -211,7 +186,7 @@ const NotesPage: React.FC = () => {
               {isEditingNotes ? (
                 <>
                   <button
-                    onClick={() => handleCancel('notes')}
+                    onClick={handleCancel}
                     className="btn btn-ghost btn-sm"
                     disabled={savingNotes}
                   >

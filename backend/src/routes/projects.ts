@@ -15,12 +15,6 @@ router.post('/', async (req: AuthRequest, res) => {
       name, 
       description, 
       notes, 
-      goals, 
-      roadmap, 
-      apiDocs, 
-      technicalDocs,
-      userDocs,
-      codeDocs,
       stagingEnvironment,
       color,
       category,
@@ -35,15 +29,9 @@ router.post('/', async (req: AuthRequest, res) => {
       name: name.trim(),
       description: description.trim(),
       notes: notes || '',
-      goals: goals || '',
       todos: [],
       devLog: [],
-      roadmap: roadmap || '',
-      phases: [],
-      apiDocs: apiDocs || '',
-      technicalDocs: technicalDocs || '',
-      userDocs: userDocs || '',
-      codeDocs: codeDocs || '',
+      docs: [], // Initialize empty docs array
       stagingEnvironment: stagingEnvironment || 'development',
       links: [],
       color: color || '#3B82F6',
@@ -94,7 +82,7 @@ router.get('/:id', async (req: AuthRequest, res) => {
   }
 });
 
-// Update project - Enhanced to handle all new fields
+// Update project - Updated to handle new fields only
 router.put('/:id', async (req: AuthRequest, res) => {
   try {
     const updateData = { ...req.body };
@@ -182,7 +170,7 @@ router.delete('/:id', async (req: AuthRequest, res) => {
   }
 });
 
-// ENHANCED TODO MANAGEMENT ENDPOINTS
+// TODO MANAGEMENT ENDPOINTS (unchanged)
 router.post('/:id/todos', async (req: AuthRequest, res) => {
   try {
     const { text, description, priority } = req.body;
@@ -278,7 +266,7 @@ router.delete('/:id/todos/:todoId', async (req: AuthRequest, res) => {
   }
 });
 
-// ENHANCED DEV LOG MANAGEMENT ENDPOINTS
+// DEV LOG MANAGEMENT ENDPOINTS (unchanged)
 router.post('/:id/devlog', async (req: AuthRequest, res) => {
   try {
     const { title, description, entry } = req.body;
@@ -381,7 +369,119 @@ router.delete('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
   }
 });
 
-// LINKS MANAGEMENT ENDPOINTS
+// NEW: DOCS MANAGEMENT ENDPOINTS
+router.post('/:id/docs', async (req: AuthRequest, res) => {
+  try {
+    const { type, title, content } = req.body;
+    
+    if (!type || !title || !content) {
+      return res.status(400).json({ message: 'Type, title, and content are required' });
+    }
+
+    const validTypes = ['Model', 'Route', 'API', 'Util', 'ENV', 'Auth', 'Runtime', 'Framework'];
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({ message: 'Invalid doc type' });
+    }
+
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const newDoc = {
+      id: uuidv4(),
+      type: type,
+      title: title.trim(),
+      content: content.trim(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    project.docs.push(newDoc);
+    await project.save();
+
+    res.json({
+      message: 'Doc added successfully',
+      doc: newDoc
+    });
+  } catch (error) {
+    console.error('Add doc error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.put('/:id/docs/:docId', async (req: AuthRequest, res) => {
+  try {
+    const { type, title, content } = req.body;
+
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const doc = project.docs.find(d => d.id === req.params.docId);
+    if (!doc) {
+      return res.status(404).json({ message: 'Doc not found' });
+    }
+
+    if (type !== undefined) {
+      const validTypes = ['Model', 'Route', 'API', 'Util', 'ENV', 'Auth', 'Runtime', 'Framework'];
+      if (!validTypes.includes(type)) {
+        return res.status(400).json({ message: 'Invalid doc type' });
+      }
+      doc.type = type;
+    }
+    if (title !== undefined) doc.title = title.trim();
+    if (content !== undefined) doc.content = content.trim();
+    doc.updatedAt = new Date();
+
+    await project.save();
+
+    res.json({
+      message: 'Doc updated successfully',
+      doc: doc
+    });
+  } catch (error) {
+    console.error('Update doc error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/:id/docs/:docId', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const docExists = project.docs.some(d => d.id === req.params.docId);
+    if (!docExists) {
+      return res.status(404).json({ message: 'Doc not found' });
+    }
+
+    project.docs = project.docs.filter(d => d.id !== req.params.docId);
+    await project.save();
+
+    res.json({ message: 'Doc deleted successfully' });
+  } catch (error) {
+    console.error('Delete doc error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// LINKS MANAGEMENT ENDPOINTS (unchanged)
 router.post('/:id/links', async (req: AuthRequest, res) => {
   try {
     const { title, url, type } = req.body;
@@ -445,22 +545,16 @@ router.delete('/:id/links/:linkId', async (req: AuthRequest, res) => {
   }
 });
 
-// Helper function to format project response
+// Helper function to format project response - Updated
 function formatProjectResponse(project: any) {
   return {
     id: project._id,
     name: project.name,
     description: project.description,
     notes: project.notes,
-    goals: project.goals,
     todos: project.todos,
     devLog: project.devLog,
-    roadmap: project.roadmap,
-    phases: project.phases,
-    apiDocs: project.apiDocs,
-    technicalDocs: project.technicalDocs,
-    userDocs: project.userDocs,
-    codeDocs: project.codeDocs,
+    docs: project.docs, // NEW: Include docs array
     stagingEnvironment: project.stagingEnvironment,
     links: project.links,
     color: project.color,
