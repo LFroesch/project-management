@@ -13,6 +13,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  theme: string; // NEW: User's preferred theme
 }
 
 export interface Todo {
@@ -48,6 +49,20 @@ export interface Link {
   type: 'github' | 'demo' | 'docs' | 'other';
 }
 
+// NEW: Tech stack interfaces
+export interface SelectedTechnology {
+  category: 'styling' | 'database' | 'framework' | 'runtime' | 'deployment' | 'testing' | 'tooling';
+  name: string;
+  version: string;
+}
+
+export interface SelectedPackage {
+  category: 'ui' | 'state' | 'routing' | 'forms' | 'animation' | 'utility' | 'api' | 'auth' | 'data';
+  name: string;
+  version: string;
+  description: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -58,8 +73,12 @@ export interface Project {
   todos: Todo[];
   devLog: DevLogEntry[];
   
-  // NEW: Documentation Templates
+  // Documentation Templates
   docs: Doc[];
+  
+  // NEW: Tech Stack & Packages
+  selectedTechnologies: SelectedTechnology[];
+  selectedPackages: SelectedPackage[];
   
   // Settings Section
   stagingEnvironment: 'development' | 'staging' | 'production';
@@ -95,6 +114,7 @@ export interface RegisterData {
   password: string;
   firstName: string;
   lastName: string;
+  theme?: string; // NEW: Optional theme on registration
 }
 
 export interface CreateProjectData {
@@ -115,6 +135,8 @@ export interface UpdateProjectData {
   color?: string;
   category?: string;
   tags?: string[];
+  selectedTechnologies?: SelectedTechnology[]; // NEW
+  selectedPackages?: SelectedPackage[]; // NEW
 }
 
 export interface CreateTodoData {
@@ -160,6 +182,27 @@ export interface CreateLinkData {
   type?: 'github' | 'demo' | 'docs' | 'other';
 }
 
+// NEW: Link update interface
+export interface UpdateLinkData {
+  title?: string;
+  url?: string;
+  type?: 'github' | 'demo' | 'docs' | 'other';
+}
+
+// NEW: Tech stack data interfaces
+export interface CreateTechnologyData {
+  category: 'styling' | 'database' | 'framework' | 'runtime' | 'deployment' | 'testing' | 'tooling';
+  name: string;
+  version?: string;
+}
+
+export interface CreatePackageData {
+  category: 'ui' | 'state' | 'routing' | 'forms' | 'animation' | 'utility' | 'api' | 'auth' | 'data';
+  name: string;
+  version?: string;
+  description?: string;
+}
+
 export const authAPI = {
   register: (data: RegisterData): Promise<AuthResponse> =>
     apiClient.post('/auth/register', data).then(res => res.data),
@@ -172,6 +215,10 @@ export const authAPI = {
   
   getMe: (): Promise<{ user: User }> =>
     apiClient.get('/auth/me').then(res => res.data),
+  
+  // NEW: Update user theme
+  updateTheme: (theme: string): Promise<{ message: string; user: User }> =>
+    apiClient.patch('/auth/theme', { theme }).then(res => res.data),
 };
 
 export const projectAPI = {
@@ -213,7 +260,7 @@ export const projectAPI = {
   deleteDevLogEntry: (projectId: string, entryId: string): Promise<{ message: string }> =>
     apiClient.delete(`/projects/${projectId}/devlog/${entryId}`).then(res => res.data),
   
-  // NEW: Docs management
+  // Docs management
   createDoc: (projectId: string, data: CreateDocData): Promise<{ message: string; doc: Doc }> =>
     apiClient.post(`/projects/${projectId}/docs`, data).then(res => res.data),
   
@@ -223,10 +270,28 @@ export const projectAPI = {
   deleteDoc: (projectId: string, docId: string): Promise<{ message: string }> =>
     apiClient.delete(`/projects/${projectId}/docs/${docId}`).then(res => res.data),
   
-  // Links management
+  // Links management (updated with edit)
   createLink: (projectId: string, data: CreateLinkData): Promise<{ message: string; link: Link }> =>
     apiClient.post(`/projects/${projectId}/links`, data).then(res => res.data),
 
+  // NEW: Update link
+  updateLink: (projectId: string, linkId: string, data: UpdateLinkData): Promise<{ message: string; link: Link }> =>
+    apiClient.put(`/projects/${projectId}/links/${linkId}`, data).then(res => res.data),
+
   deleteLink: (projectId: string, linkId: string): Promise<{ message: string }> =>
     apiClient.delete(`/projects/${projectId}/links/${linkId}`).then(res => res.data),
+  
+  // NEW: Tech stack management
+  addTechnology: (projectId: string, data: CreateTechnologyData): Promise<{ message: string; technology: SelectedTechnology }> =>
+    apiClient.post(`/projects/${projectId}/technologies`, data).then(res => res.data),
+  
+  removeTechnology: (projectId: string, category: string, name: string): Promise<{ message: string }> =>
+    apiClient.delete(`/projects/${projectId}/technologies/${category}/${encodeURIComponent(name)}`).then(res => res.data),
+  
+  // NEW: Packages management
+  addPackage: (projectId: string, data: CreatePackageData): Promise<{ message: string; package: SelectedPackage }> =>
+    apiClient.post(`/projects/${projectId}/packages`, data).then(res => res.data),
+  
+  removePackage: (projectId: string, category: string, name: string): Promise<{ message: string }> =>
+    apiClient.delete(`/projects/${projectId}/packages/${category}/${encodeURIComponent(name)}`).then(res => res.data),
 };

@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string;
   firstName: string;
   lastName: string;
+  theme: string; // NEW: Store user's preferred theme
   createdAt: Date;
   updatedAt: Date;
   comparePassword(password: string): Promise<boolean>;
@@ -33,6 +34,17 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
     trim: true
+  },
+  theme: {
+    type: String,
+    default: 'cyberpunk',
+    enum: [
+      "light", "dark", "cupcake", "bumblebee", "emerald", "corporate", 
+      "synthwave", "retro", "cyberpunk", "valentine", "halloween", 
+      "garden", "forest", "aqua", "lofi", "pastel", "fantasy", 
+      "wireframe", "black", "luxury", "dracula", "cmyk", "autumn", 
+      "business", "acid", "lemonade", "night", "coffee", "winter", "dim"
+    ]
   }
 }, {
   timestamps: true

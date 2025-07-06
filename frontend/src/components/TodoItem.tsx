@@ -97,7 +97,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, projectId, onUpdate, onArchiv
               <label className="label-text">Priority:</label>
               <select
                 value={editPriority}
-                onChange={(e) => setEditPriority(e.target.value)}
+                onChange={(e) => setEditPriority(e.target.value as 'low' | 'medium' | 'high')}
                 className="select select-bordered select-sm"
               >
                 <option value="low">Low</option>
@@ -210,7 +210,7 @@ const NewTodoForm: React.FC<NewTodoFormProps> = ({ projectId, onAdd }) => {
       await projectAPI.createTodo(projectId, {
         text: title.trim(),
         description: description.trim(),
-        priority
+        priority: priority as 'low' | 'medium' | 'high'
       });
       setTitle('');
       setDescription('');
@@ -249,7 +249,7 @@ const NewTodoForm: React.FC<NewTodoFormProps> = ({ projectId, onAdd }) => {
             <label style={{ fontSize: '16px' }} className="label-text">Priority:</label>
             <select
               value={priority}
-              onChange={(e) => setPriority(e.target.value)}
+              onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
               className="select select-bordered border-base-300 select-sm"
               style={{ fontSize: '16px' }}
             >

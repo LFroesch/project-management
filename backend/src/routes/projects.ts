@@ -8,18 +8,10 @@ const router = express.Router();
 // All routes require authentication
 router.use(requireAuth);
 
-// Create project - Updated to handle new fields
+// Create project
 router.post('/', async (req: AuthRequest, res) => {
   try {
-    const { 
-      name, 
-      description, 
-      notes, 
-      stagingEnvironment,
-      color,
-      category,
-      tags
-    } = req.body;
+    const { name, description, notes, stagingEnvironment, color, category, tags } = req.body;
 
     if (!name || !description) {
       return res.status(400).json({ message: 'Name and description are required' });
@@ -31,7 +23,9 @@ router.post('/', async (req: AuthRequest, res) => {
       notes: notes || '',
       todos: [],
       devLog: [],
-      docs: [], // Initialize empty docs array
+      docs: [],
+      selectedTechnologies: [],
+      selectedPackages: [],
       stagingEnvironment: stagingEnvironment || 'development',
       links: [],
       color: color || '#3B82F6',
@@ -51,7 +45,7 @@ router.post('/', async (req: AuthRequest, res) => {
   }
 });
 
-// Get user's projects - Updated response format
+// Get user's projects
 router.get('/', async (req: AuthRequest, res) => {
   try {
     const projects = await Project.find({ userId: req.userId }).sort({ createdAt: -1 });
@@ -63,13 +57,10 @@ router.get('/', async (req: AuthRequest, res) => {
   }
 });
 
-// Get single project - Updated response format
+// Get single project
 router.get('/:id', async (req: AuthRequest, res) => {
   try {
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
     
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -82,12 +73,11 @@ router.get('/:id', async (req: AuthRequest, res) => {
   }
 });
 
-// Update project - Updated to handle new fields only
+// Update project
 router.put('/:id', async (req: AuthRequest, res) => {
   try {
     const updateData = { ...req.body };
     
-    // Validate required fields
     if (updateData.name && !updateData.name.trim()) {
       return res.status(400).json({ message: 'Name cannot be empty' });
     }
@@ -96,9 +86,7 @@ router.put('/:id', async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Description cannot be empty' });
     }
 
-    // Validate staging environment
-    if (updateData.stagingEnvironment && 
-        !['development', 'staging', 'production'].includes(updateData.stagingEnvironment)) {
+    if (updateData.stagingEnvironment && !['development', 'staging', 'production'].includes(updateData.stagingEnvironment)) {
       return res.status(400).json({ message: 'Invalid staging environment' });
     }
 
@@ -147,17 +135,14 @@ router.patch('/:id/archive', async (req: AuthRequest, res) => {
     });
   } catch (error) {
     console.error('Archive project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
 // Delete project
 router.delete('/:id', async (req: AuthRequest, res) => {
   try {
-    const project = await Project.findOneAndDelete({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOneAndDelete({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -166,11 +151,150 @@ router.delete('/:id', async (req: AuthRequest, res) => {
     res.json({ message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Delete project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// TODO MANAGEMENT ENDPOINTS (unchanged)
+// TECH STACK MANAGEMENT
+router.post('/:id/technologies', async (req: AuthRequest, res) => {
+  try {
+    const { category, name, version } = req.body;
+    
+    if (!category || !name) {
+      return res.status(400).json({ message: 'Category and name are required' });
+    }
+
+    const validCategories = ['styling', 'database', 'framework', 'runtime', 'deployment', 'testing', 'tooling'];
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ message: 'Invalid technology category' });
+    }
+
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const existingTech = project.selectedTechnologies.find(
+      tech => tech.category === category && tech.name === name
+    );
+
+    if (existingTech) {
+      return res.status(400).json({ message: 'Technology already added to this category' });
+    }
+
+    const newTech = {
+      category,
+      name: name.trim(),
+      version: version?.trim() || ''
+    };
+
+    project.selectedTechnologies.push(newTech);
+    await project.save();
+
+    res.json({
+      message: 'Technology added successfully',
+      technology: newTech
+    });
+  } catch (error) {
+    console.error('Add technology error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/:id/technologies/:category/:name', async (req: AuthRequest, res) => {
+  try {
+    const { category, name } = req.params;
+
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    project.selectedTechnologies = project.selectedTechnologies.filter(
+      tech => !(tech.category === category && tech.name === decodeURIComponent(name))
+    );
+    await project.save();
+
+    res.json({ message: 'Technology removed successfully' });
+  } catch (error) {
+    console.error('Remove technology error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// PACKAGES MANAGEMENT
+router.post('/:id/packages', async (req: AuthRequest, res) => {
+  try {
+    const { category, name, version, description } = req.body;
+    
+    if (!category || !name) {
+      return res.status(400).json({ message: 'Category and name are required' });
+    }
+
+    const validCategories = ['ui', 'state', 'routing', 'forms', 'animation', 'utility', 'api', 'auth', 'data'];
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ message: 'Invalid package category' });
+    }
+
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const existingPackage = project.selectedPackages.find(
+      pkg => pkg.category === category && pkg.name === name
+    );
+
+    if (existingPackage) {
+      return res.status(400).json({ message: 'Package already added to this category' });
+    }
+
+    const newPackage = {
+      category,
+      name: name.trim(),
+      version: version?.trim() || '',
+      description: description?.trim() || ''
+    };
+
+    project.selectedPackages.push(newPackage);
+    await project.save();
+
+    res.json({
+      message: 'Package added successfully',
+      package: newPackage
+    });
+  } catch (error) {
+    console.error('Add package error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/:id/packages/:category/:name', async (req: AuthRequest, res) => {
+  try {
+    const { category, name } = req.params;
+
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    project.selectedPackages = project.selectedPackages.filter(
+      pkg => !(pkg.category === category && pkg.name === decodeURIComponent(name))
+    );
+    await project.save();
+
+    res.json({ message: 'Package removed successfully' });
+  } catch (error) {
+    console.error('Remove package error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// TODO MANAGEMENT
 router.post('/:id/todos', async (req: AuthRequest, res) => {
   try {
     const { text, description, priority } = req.body;
@@ -179,10 +303,7 @@ router.post('/:id/todos', async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Todo text is required' });
     }
 
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -214,10 +335,7 @@ router.put('/:id/todos/:todoId', async (req: AuthRequest, res) => {
   try {
     const { text, description, priority, completed } = req.body;
 
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -247,10 +365,7 @@ router.put('/:id/todos/:todoId', async (req: AuthRequest, res) => {
 
 router.delete('/:id/todos/:todoId', async (req: AuthRequest, res) => {
   try {
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -266,7 +381,7 @@ router.delete('/:id/todos/:todoId', async (req: AuthRequest, res) => {
   }
 });
 
-// DEV LOG MANAGEMENT ENDPOINTS (unchanged)
+// DEV LOG MANAGEMENT
 router.post('/:id/devlog', async (req: AuthRequest, res) => {
   try {
     const { title, description, entry } = req.body;
@@ -275,10 +390,7 @@ router.post('/:id/devlog', async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Dev log entry is required' });
     }
 
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -313,10 +425,7 @@ router.put('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Dev log entry is required' });
     }
 
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -345,18 +454,10 @@ router.put('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
 
 router.delete('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
   try {
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
-    }
-
-    const entryExists = project.devLog.some(e => e.id === req.params.entryId);
-    if (!entryExists) {
-      return res.status(404).json({ message: 'Dev log entry not found' });
     }
 
     project.devLog = project.devLog.filter(e => e.id !== req.params.entryId);
@@ -369,7 +470,7 @@ router.delete('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
   }
 });
 
-// NEW: DOCS MANAGEMENT ENDPOINTS
+// DOCS MANAGEMENT
 router.post('/:id/docs', async (req: AuthRequest, res) => {
   try {
     const { type, title, content } = req.body;
@@ -383,10 +484,7 @@ router.post('/:id/docs', async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Invalid doc type' });
     }
 
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -418,10 +516,7 @@ router.put('/:id/docs/:docId', async (req: AuthRequest, res) => {
   try {
     const { type, title, content } = req.body;
 
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -457,18 +552,10 @@ router.put('/:id/docs/:docId', async (req: AuthRequest, res) => {
 
 router.delete('/:id/docs/:docId', async (req: AuthRequest, res) => {
   try {
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
-    }
-
-    const docExists = project.docs.some(d => d.id === req.params.docId);
-    if (!docExists) {
-      return res.status(404).json({ message: 'Doc not found' });
     }
 
     project.docs = project.docs.filter(d => d.id !== req.params.docId);
@@ -481,7 +568,7 @@ router.delete('/:id/docs/:docId', async (req: AuthRequest, res) => {
   }
 });
 
-// LINKS MANAGEMENT ENDPOINTS (unchanged)
+// LINKS MANAGEMENT
 router.post('/:id/links', async (req: AuthRequest, res) => {
   try {
     const { title, url, type } = req.body;
@@ -490,10 +577,7 @@ router.post('/:id/links', async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Title and URL are required' });
     }
 
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -519,20 +603,43 @@ router.post('/:id/links', async (req: AuthRequest, res) => {
   }
 });
 
-router.delete('/:id/links/:linkId', async (req: AuthRequest, res) => {
+router.put('/:id/links/:linkId', async (req: AuthRequest, res) => {
   try {
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
+    const { title, url, type } = req.body;
+
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    const linkExists = project.links.some(l => l.id === req.params.linkId);
-    if (!linkExists) {
+    const link = project.links.find(l => l.id === req.params.linkId);
+    if (!link) {
       return res.status(404).json({ message: 'Link not found' });
+    }
+
+    if (title !== undefined) link.title = title.trim();
+    if (url !== undefined) link.url = url.trim();
+    if (type !== undefined) link.type = type;
+
+    await project.save();
+
+    res.json({
+      message: 'Link updated successfully',
+      link: link
+    });
+  } catch (error) {
+    console.error('Update link error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/:id/links/:linkId', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ _id: req.params.id, userId: req.userId });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
     }
 
     project.links = project.links.filter(l => l.id !== req.params.linkId);
@@ -545,7 +652,7 @@ router.delete('/:id/links/:linkId', async (req: AuthRequest, res) => {
   }
 });
 
-// Helper function to format project response - Updated
+// Helper function to format project response
 function formatProjectResponse(project: any) {
   return {
     id: project._id,
@@ -554,7 +661,9 @@ function formatProjectResponse(project: any) {
     notes: project.notes,
     todos: project.todos,
     devLog: project.devLog,
-    docs: project.docs, // NEW: Include docs array
+    docs: project.docs,
+    selectedTechnologies: project.selectedTechnologies || [],
+    selectedPackages: project.selectedPackages || [],
     stagingEnvironment: project.stagingEnvironment,
     links: project.links,
     color: project.color,

@@ -1,13 +1,14 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
+import { requireAuth, AuthRequest } from '../middleware/auth';
 
 const router = express.Router();
 
 // Register route
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName, theme } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -20,7 +21,8 @@ router.post('/register', async (req, res) => {
       email,
       password,
       firstName,
-      lastName
+      lastName,
+      theme: theme || 'cyberpunk'
     });
 
     await user.save();
@@ -46,7 +48,8 @@ router.post('/register', async (req, res) => {
         id: user._id,
         email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName
+        lastName: user.lastName,
+        theme: user.theme
       }
     });
   } catch (error) {
@@ -92,7 +95,8 @@ router.post('/login', async (req, res) => {
         id: user._id,
         email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName
+        lastName: user.lastName,
+        theme: user.theme
       }
     });
   } catch (error) {
@@ -122,9 +126,61 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    res.json({message: 'User retrieved successfully',  user });
+    res.json({
+      message: 'User retrieved successfully',  
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        theme: user.theme
+      }
+    });
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });
+  }
+});
+
+// NEW: Update user theme
+router.patch('/theme', requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const { theme } = req.body;
+    
+    const validThemes = [
+      "light", "dark", "cupcake", "bumblebee", "emerald", "corporate", 
+      "synthwave", "retro", "cyberpunk", "valentine", "halloween", 
+      "garden", "forest", "aqua", "lofi", "pastel", "fantasy", 
+      "wireframe", "black", "luxury", "dracula", "cmyk", "autumn", 
+      "business", "acid", "lemonade", "night", "coffee", "winter", "dim"
+    ];
+
+    if (!validThemes.includes(theme)) {
+      return res.status(400).json({ message: 'Invalid theme' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { theme },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      message: 'Theme updated successfully',
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        theme: user.theme
+      }
+    });
+  } catch (error) {
+    console.error('Update theme error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

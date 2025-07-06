@@ -46,6 +46,28 @@ const linkSchema = new Schema({
   }
 });
 
+// NEW: Tech stack selection schemas
+const selectedTechSchema = new Schema({
+  category: { 
+    type: String, 
+    required: true,
+    enum: ['styling', 'database', 'framework', 'runtime', 'deployment', 'testing', 'tooling']
+  },
+  name: { type: String, required: true },
+  version: { type: String, default: '' }
+});
+
+const selectedPackageSchema = new Schema({
+  category: { 
+    type: String, 
+    required: true,
+    enum: ['ui', 'state', 'routing', 'forms', 'animation', 'utility', 'api', 'auth', 'data']
+  },
+  name: { type: String, required: true },
+  version: { type: String, default: '' },
+  description: { type: String, default: '' }
+});
+
 export interface IProject extends Document {
   // Basic fields
   name: string;
@@ -57,7 +79,7 @@ export interface IProject extends Document {
   updatedAt: Date;
   
   // Notes Section
-  notes: string; // Still supports markdown
+  notes: string;
   todos: Array<{
     id: string;
     text: string;
@@ -74,7 +96,7 @@ export interface IProject extends Document {
     date: Date;
   }>;
   
-  // NEW: Structured Documentation Templates
+  // Documentation Templates
   docs: Array<{
     id: string;
     type: 'Model' | 'Route' | 'API' | 'Util' | 'ENV' | 'Auth' | 'Runtime' | 'Framework';
@@ -82,6 +104,19 @@ export interface IProject extends Document {
     content: string;
     createdAt: Date;
     updatedAt: Date;
+  }>;
+  
+  // NEW: Tech Stack & Packages
+  selectedTechnologies: Array<{
+    category: 'styling' | 'database' | 'framework' | 'runtime' | 'deployment' | 'testing' | 'tooling';
+    name: string;
+    version: string;
+  }>;
+  selectedPackages: Array<{
+    category: 'ui' | 'state' | 'routing' | 'forms' | 'animation' | 'utility' | 'api' | 'auth' | 'data';
+    name: string;
+    version: string;
+    description: string;
   }>;
   
   // Settings Section
@@ -117,8 +152,12 @@ const projectSchema = new Schema<IProject>({
   todos: [todoSchema],
   devLog: [devLogSchema],
   
-  // NEW: Structured Documentation Templates
+  // Documentation Templates
   docs: [docSchema],
+  
+  // NEW: Tech Stack & Packages
+  selectedTechnologies: [selectedTechSchema],
+  selectedPackages: [selectedPackageSchema],
   
   // Settings Section
   stagingEnvironment: {
@@ -129,7 +168,7 @@ const projectSchema = new Schema<IProject>({
   links: [linkSchema],
   color: {
     type: String,
-    default: '#3B82F6' // Default blue
+    default: '#3B82F6'
   },
   category: {
     type: String,

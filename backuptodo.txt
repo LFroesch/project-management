@@ -1,15 +1,14 @@
 # Notes / To Do
-- remove goals from db model
+- Finishing Touches on this section, move To Dos / Dev Log to new tab or something? Make todos be more fluid as a workflow
 
 # Stack / Progress
-- Roadmap -> Stack / Progress
-- Make selectable / interactable / options for framework, warns of compatibilities
+- Make it so you can pick and choose from a big bank of options that are like red = styling, blue = database etc, but you can choose multiple in each if you so choose
+- Add packages section that is the same thing a big bank of options of packages
+- All of these *IN THE FRONT END* have associated const descriptions that will show to help the user pick between them / remember what they are
 - Development Phases -> Progress Checkpoints (Different for different types of projects, templated)
 
 # Docs / Features
-- Remove docs from db model, replace with docs array
-- Add Button to create a Model / Route (Group) / API / Util / ENV / Auth / Runtime / Framework etc. which is an array itself inside the docs array
-- each of these creates a template for you to fill out to plan out these things, also has a description field for explaining each thing
+- Tune up this section / presets
 - Separate into backend / frontend / mobile / desktop sections (toggle which you're using)
 
 # Settings / Info
@@ -18,18 +17,11 @@
 # Account Settings
 - Save Theme to user db
 
-# Main/Layout
+# Future
+- More collapsibility where it should be / better shadowing / layout / font sizing etc just some cleaning / Contrast
+- Scrolling feels a little weird, make boxes snap to size? Expand when typing? Idk how to fix this really.
+- SHARING (Below)
 - Search Functionality
-- Email Verification/PasswordResetting
-- More contrast / better UX, still clean 
-
-# Sharing
-- Can invite someone to a project (make it shared) during project creation / while its already a project (moving it to shared, option within settings page)
-- If its a shared project you can delete yourself from it, if you are the last person, it deletes itself
-- Add users_shared_with to schema etc
-- API to "send" and "receive" projects to and from other users
-
-# Future Features
 - AI assistant
 - Export your info as a doc for going from prototyping -> start of project
 - Above / except boilerplate code
@@ -37,7 +29,8 @@
 - activity heatmap ?
 - RESET PASSWORD / EMAIL VERIFICATION
 
-Voice-Memo-Transcriber
-Fix up the UI
-Format the output a little better
-Prompt to reset chat on open
+# Sharing
+- Can invite someone to a project (make it shared) during project creation / while its already a project (moving it to shared, option within settings page)
+- If its a shared project you can delete yourself from it, if you are the last person, it deletes itself
+- Add users_shared_with to schema etc
+- API to "send" and "receive" projects to and from other users

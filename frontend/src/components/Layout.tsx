@@ -168,12 +168,6 @@ const Layout: React.FC = () => {
           <h1 className="text-2xl font-bold">Project Manager</h1>
           <div className="flex items-center gap-6">
             <span className="text-lg">Hi, {user?.firstName}!</span>
-            <button
-              onClick={() => navigate('/create-project')}
-              className="btn btn-primary btn-sm"
-            >
-              Create Project
-            </button>
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-ghost btn-circle">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,8 +208,13 @@ const Layout: React.FC = () => {
               placeholder="Search projects..."
               className="input input-bordered w-full"
             />
+            <button
+              onClick={() => navigate('/create-project')}
+              className="btn btn-primary btn-sm mt-4 mx-auto block"
+            >
+              Create Project
+            </button>
           </div>
-
           {/* Current Projects */}
           <div className="mb-8">
             <h3 className="font-bold mb-4 text-lg">Current</h3>
