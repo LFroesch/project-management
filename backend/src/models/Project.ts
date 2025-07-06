@@ -4,12 +4,20 @@ import mongoose, { Document, Schema } from 'mongoose';
 const todoSchema = new Schema({
   id: { type: String, required: true },
   text: { type: String, required: true },
+  description: { type: String, default: '' },
+  priority: { 
+    type: String, 
+    enum: ['low', 'medium', 'high'],
+    default: 'medium'
+  },
   completed: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 
 const devLogSchema = new Schema({
   id: { type: String, required: true },
+  title: { type: String, default: '' },
+  description: { type: String, default: '' },
   entry: { type: String, required: true },
   date: { type: Date, default: Date.now }
 });
@@ -54,11 +62,15 @@ export interface IProject extends Document {
   todos: Array<{
     id: string;
     text: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high';
     completed: boolean;
     createdAt: Date;
   }>;
   devLog: Array<{
     id: string;
+    title: string;
+    description: string;
     entry: string;
     date: Date;
   }>;

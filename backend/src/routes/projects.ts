@@ -1,7 +1,7 @@
 import express from 'express';
 import { Project } from '../models/Project';
 import { requireAuth, AuthRequest } from '../middleware/auth';
-import { v4 as uuidv4 } from 'uuid'; // Need to add this dependency
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
@@ -60,84 +60,6 @@ router.post('/', async (req: AuthRequest, res) => {
   } catch (error) {
     console.error('Create project error:', error);
     res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// DELETE: Delete a link
-router.delete('/:id/links/:linkId', async (req: AuthRequest, res) => {
-  try {
-    const project = await Project.findOne({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
-
-    if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
-
-    const linkExists = project.links.some(l => l.id === req.params.linkId);
-    if (!linkExists) {
-      return res.status(404).json({ message: 'Link not found' });
-    }
-
-    project.links = project.links.filter(l => l.id !== req.params.linkId);
-    await project.save();
-
-    res.json({ message: 'Link deleted successfully' });
-  } catch (error) {
-    console.error('Delete link error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Add these routes to your backend/src/routes/projects.ts file
-// Place them after the existing routes but before the export default router line
-
-// Archive/Unarchive project
-router.patch('/:id/archive', async (req: AuthRequest, res) => {
-  try {
-    const { isArchived } = req.body;
-    
-    if (typeof isArchived !== 'boolean') {
-      return res.status(400).json({ message: 'isArchived must be a boolean value' });
-    }
-
-    const project = await Project.findOneAndUpdate(
-      { _id: req.params.id, userId: req.userId },
-      { isArchived },
-      { new: true, runValidators: true }
-    );
-
-    if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
-
-    res.json({
-      message: `Project ${isArchived ? 'archived' : 'unarchived'} successfully`,
-      project: formatProjectResponse(project)
-    });
-  } catch (error) {
-    console.error('Archive project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
-  }
-});
-
-// Delete project
-router.delete('/:id', async (req: AuthRequest, res) => {
-  try {
-    const project = await Project.findOneAndDelete({ 
-      _id: req.params.id, 
-      userId: req.userId 
-    });
-
-    if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
-
-    res.json({ message: 'Project deleted successfully' });
-  } catch (error) {
-    console.error('Delete project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
   }
 });
 
@@ -212,10 +134,58 @@ router.put('/:id', async (req: AuthRequest, res) => {
   }
 });
 
-// NEW: Todo management endpoints
+// Archive/Unarchive project
+router.patch('/:id/archive', async (req: AuthRequest, res) => {
+  try {
+    const { isArchived } = req.body;
+    
+    if (typeof isArchived !== 'boolean') {
+      return res.status(400).json({ message: 'isArchived must be a boolean value' });
+    }
+
+    const project = await Project.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { isArchived },
+      { new: true, runValidators: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({
+      message: `Project ${isArchived ? 'archived' : 'unarchived'} successfully`,
+      project: formatProjectResponse(project)
+    });
+  } catch (error) {
+    console.error('Archive project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+// Delete project
+router.delete('/:id', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOneAndDelete({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.json({ message: 'Project deleted successfully' });
+  } catch (error) {
+    console.error('Delete project error:', error);
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+// ENHANCED TODO MANAGEMENT ENDPOINTS
 router.post('/:id/todos', async (req: AuthRequest, res) => {
   try {
-    const { text } = req.body;
+    const { text, description, priority } = req.body;
     
     if (!text || !text.trim()) {
       return res.status(400).json({ message: 'Todo text is required' });
@@ -233,6 +203,8 @@ router.post('/:id/todos', async (req: AuthRequest, res) => {
     const newTodo = {
       id: uuidv4(),
       text: text.trim(),
+      description: description?.trim() || '',
+      priority: priority || 'medium',
       completed: false,
       createdAt: new Date()
     };
@@ -252,7 +224,7 @@ router.post('/:id/todos', async (req: AuthRequest, res) => {
 
 router.put('/:id/todos/:todoId', async (req: AuthRequest, res) => {
   try {
-    const { text, completed } = req.body;
+    const { text, description, priority, completed } = req.body;
 
     const project = await Project.findOne({ 
       _id: req.params.id, 
@@ -269,6 +241,8 @@ router.put('/:id/todos/:todoId', async (req: AuthRequest, res) => {
     }
 
     if (text !== undefined) todo.text = text.trim();
+    if (description !== undefined) todo.description = description.trim();
+    if (priority !== undefined) todo.priority = priority;
     if (completed !== undefined) todo.completed = completed;
 
     await project.save();
@@ -304,10 +278,10 @@ router.delete('/:id/todos/:todoId', async (req: AuthRequest, res) => {
   }
 });
 
-// NEW: Dev log management endpoints
+// ENHANCED DEV LOG MANAGEMENT ENDPOINTS
 router.post('/:id/devlog', async (req: AuthRequest, res) => {
   try {
-    const { entry } = req.body;
+    const { title, description, entry } = req.body;
     
     if (!entry || !entry.trim()) {
       return res.status(400).json({ message: 'Dev log entry is required' });
@@ -324,6 +298,8 @@ router.post('/:id/devlog', async (req: AuthRequest, res) => {
 
     const newEntry = {
       id: uuidv4(),
+      title: title?.trim() || '',
+      description: description?.trim() || '',
       entry: entry.trim(),
       date: new Date()
     };
@@ -341,10 +317,9 @@ router.post('/:id/devlog', async (req: AuthRequest, res) => {
   }
 });
 
-// NEW: Update dev log entry
 router.put('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
   try {
-    const { entry } = req.body;
+    const { title, description, entry } = req.body;
     
     if (!entry || !entry.trim()) {
       return res.status(400).json({ message: 'Dev log entry is required' });
@@ -364,7 +339,10 @@ router.put('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
       return res.status(404).json({ message: 'Dev log entry not found' });
     }
 
+    if (title !== undefined) devLogEntry.title = title.trim();
+    if (description !== undefined) devLogEntry.description = description.trim();
     devLogEntry.entry = entry.trim();
+
     await project.save();
 
     res.json({
@@ -377,7 +355,6 @@ router.put('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
   }
 });
 
-// NEW: Delete dev log entry
 router.delete('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
   try {
     const project = await Project.findOne({ 
@@ -404,36 +381,7 @@ router.delete('/:id/devlog/:entryId', async (req: AuthRequest, res) => {
   }
 });
 
-// Archive/Unarchive project
-router.patch('/:id/archive', async (req: AuthRequest, res) => {
-  try {
-    const { isArchived } = req.body;
-    
-    if (typeof isArchived !== 'boolean') {
-      return res.status(400).json({ message: 'isArchived must be a boolean value' });
-    }
-
-    const project = await Project.findOneAndUpdate(
-      { _id: req.params.id, userId: req.userId },
-      { isArchived },
-      { new: true, runValidators: true }
-    );
-
-    if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
-
-    res.json({
-      message: `Project ${isArchived ? 'archived' : 'unarchived'} successfully`,
-      project: formatProjectResponse(project)
-    });
-  } catch (error) {
-    console.error('Archive project error:', error);
-    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
-  }
-});
-
-// NEW: Links management endpoints
+// LINKS MANAGEMENT ENDPOINTS
 router.post('/:id/links', async (req: AuthRequest, res) => {
   try {
     const { title, url, type } = req.body;
@@ -467,6 +415,32 @@ router.post('/:id/links', async (req: AuthRequest, res) => {
     });
   } catch (error) {
     console.error('Add link error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/:id/links/:linkId', async (req: AuthRequest, res) => {
+  try {
+    const project = await Project.findOne({ 
+      _id: req.params.id, 
+      userId: req.userId 
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const linkExists = project.links.some(l => l.id === req.params.linkId);
+    if (!linkExists) {
+      return res.status(404).json({ message: 'Link not found' });
+    }
+
+    project.links = project.links.filter(l => l.id !== req.params.linkId);
+    await project.save();
+
+    res.json({ message: 'Link deleted successfully' });
+  } catch (error) {
+    console.error('Delete link error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Project } from '../api/client';
-import CollapsibleSection from '../components/CollapsibleSection';
 
 interface ContextType {
   selectedProject: Project | null;
@@ -109,8 +108,12 @@ const DocsPage: React.FC = () => {
 
   if (!selectedProject) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        Select a project to view documentation
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">📚</div>
+          <h2 className="text-2xl font-bold mb-2">Select a project</h2>
+          <p className="text-base-content/60">Choose a project from the sidebar to view documentation</p>
+        </div>
       </div>
     );
   }
@@ -124,29 +127,36 @@ const DocsPage: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="alert alert-error">
+          <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
         </div>
       )}
 
       {/* API Documentation Section */}
-      <CollapsibleSection title="API Documentation" defaultOpen={true}>
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" defaultChecked />
+        <div className="collapse-title text-xl font-medium">
+          🔌 API Documentation {apiDocs && '(Has Content)'}
+        </div>
+        <div className="collapse-content">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">API endpoints, request/response examples, and authentication</p>
+            <p className="text-base-content/60">API endpoints, request/response examples, and authentication</p>
             <div className="flex space-x-2">
               {isEditingApiDocs ? (
                 <>
                   <button
                     onClick={() => handleCancel('api')}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="btn btn-ghost btn-sm"
                     disabled={savingApi}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleSave('api')}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="btn btn-primary btn-sm"
                     disabled={savingApi}
                   >
                     {savingApi ? 'Saving...' : 'Save'}
@@ -155,7 +165,7 @@ const DocsPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditingApiDocs(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="btn btn-outline btn-sm"
                 >
                   Edit
                 </button>
@@ -167,43 +177,47 @@ const DocsPage: React.FC = () => {
             <textarea
               value={apiDocs}
               onChange={(e) => setApiDocs(e.target.value)}
-              className="w-full h-64 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-mono text-sm"
+              className="textarea textarea-bordered w-full h-64 resize-none font-mono"
               placeholder="Document your API endpoints here..."
             />
           ) : (
-            <div className="min-h-64 p-4 bg-gray-50 rounded-md">
+            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
               {apiDocs ? (
-                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed font-mono text-sm">
+                <div className="whitespace-pre-wrap font-mono text-sm leading-relaxed">
                   {apiDocs}
                 </div>
               ) : (
-                <div className="text-gray-500 italic">
+                <div className="text-base-content/60 italic">
                   No API documentation yet. Click Edit to add documentation for your endpoints.
                 </div>
               )}
             </div>
           )}
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Technical Documentation Section */}
-      <CollapsibleSection title="Technical Documentation">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          🔧 Technical Documentation {technicalDocs && '(Has Content)'}
+        </div>
+        <div className="collapse-content">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Architecture, setup guides, and technical specifications</p>
+            <p className="text-base-content/60">Architecture, setup guides, and technical specifications</p>
             <div className="flex space-x-2">
               {isEditingTechnicalDocs ? (
                 <>
                   <button
                     onClick={() => handleCancel('technical')}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="btn btn-ghost btn-sm"
                     disabled={savingTechnical}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleSave('technical')}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="btn btn-primary btn-sm"
                     disabled={savingTechnical}
                   >
                     {savingTechnical ? 'Saving...' : 'Save'}
@@ -212,7 +226,7 @@ const DocsPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditingTechnicalDocs(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="btn btn-outline btn-sm"
                 >
                   Edit
                 </button>
@@ -224,43 +238,47 @@ const DocsPage: React.FC = () => {
             <textarea
               value={technicalDocs}
               onChange={(e) => setTechnicalDocs(e.target.value)}
-              className="w-full h-64 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="textarea textarea-bordered w-full h-64 resize-none"
               placeholder="Document your technical architecture and setup instructions here..."
             />
           ) : (
-            <div className="min-h-64 p-4 bg-gray-50 rounded-md">
+            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
               {technicalDocs ? (
-                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                <div className="whitespace-pre-wrap leading-relaxed">
                   {technicalDocs}
                 </div>
               ) : (
-                <div className="text-gray-500 italic">
+                <div className="text-base-content/60 italic">
                   No technical documentation yet. Click Edit to add architecture and setup guides.
                 </div>
               )}
             </div>
           )}
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* User Documentation Section */}
-      <CollapsibleSection title="User Documentation">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          👥 User Documentation {userDocs && '(Has Content)'}
+        </div>
+        <div className="collapse-content">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">User guides, how-to instructions, and feature explanations</p>
+            <p className="text-base-content/60">User guides, how-to instructions, and feature explanations</p>
             <div className="flex space-x-2">
               {isEditingUserDocs ? (
                 <>
                   <button
                     onClick={() => handleCancel('user')}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="btn btn-ghost btn-sm"
                     disabled={savingUser}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleSave('user')}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="btn btn-primary btn-sm"
                     disabled={savingUser}
                   >
                     {savingUser ? 'Saving...' : 'Save'}
@@ -269,7 +287,7 @@ const DocsPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditingUserDocs(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="btn btn-outline btn-sm"
                 >
                   Edit
                 </button>
@@ -281,43 +299,47 @@ const DocsPage: React.FC = () => {
             <textarea
               value={userDocs}
               onChange={(e) => setUserDocs(e.target.value)}
-              className="w-full h-64 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="textarea textarea-bordered w-full h-64 resize-none"
               placeholder="Document user guides and how-to instructions here..."
             />
           ) : (
-            <div className="min-h-64 p-4 bg-gray-50 rounded-md">
+            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
               {userDocs ? (
-                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                <div className="whitespace-pre-wrap leading-relaxed">
                   {userDocs}
                 </div>
               ) : (
-                <div className="text-gray-500 italic">
+                <div className="text-base-content/60 italic">
                   No user documentation yet. Click Edit to add user guides and instructions.
                 </div>
               )}
             </div>
           )}
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Code Documentation Section */}
-      <CollapsibleSection title="Code Documentation">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          💻 Code Documentation {codeDocs && '(Has Content)'}
+        </div>
+        <div className="collapse-content">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Code standards, conventions, and development guidelines</p>
+            <p className="text-base-content/60">Code standards, conventions, and development guidelines</p>
             <div className="flex space-x-2">
               {isEditingCodeDocs ? (
                 <>
                   <button
                     onClick={() => handleCancel('code')}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="btn btn-ghost btn-sm"
                     disabled={savingCode}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleSave('code')}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="btn btn-primary btn-sm"
                     disabled={savingCode}
                   >
                     {savingCode ? 'Saving...' : 'Save'}
@@ -326,7 +348,7 @@ const DocsPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditingCodeDocs(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="btn btn-outline btn-sm"
                 >
                   Edit
                 </button>
@@ -338,32 +360,36 @@ const DocsPage: React.FC = () => {
             <textarea
               value={codeDocs}
               onChange={(e) => setCodeDocs(e.target.value)}
-              className="w-full h-64 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="textarea textarea-bordered w-full h-64 resize-none"
               placeholder="Document your code standards and development guidelines here..."
             />
           ) : (
-            <div className="min-h-64 p-4 bg-gray-50 rounded-md">
+            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
               {codeDocs ? (
-                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                <div className="whitespace-pre-wrap leading-relaxed">
                   {codeDocs}
                 </div>
               ) : (
-                <div className="text-gray-500 italic">
+                <div className="text-base-content/60 italic">
                   No code documentation yet. Click Edit to add coding standards and guidelines.
                 </div>
               )}
             </div>
           )}
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Documentation Templates Section */}
-      <CollapsibleSection title="Documentation Templates">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          📋 Documentation Templates
+        </div>
+        <div className="collapse-content">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-800 mb-2">API Endpoint Template</h4>
-              <pre className="text-xs text-blue-700 overflow-x-auto">
+            <div className="p-4 bg-info/10 rounded-lg border border-info/20">
+              <h4 className="font-semibold text-info mb-2">API Endpoint Template</h4>
+              <pre className="text-xs text-info/80 overflow-x-auto">
 {`## POST /api/endpoint
 Description: Brief description
 
@@ -380,9 +406,9 @@ Response:
               </pre>
             </div>
 
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <h4 className="font-semibold text-green-800 mb-2">Setup Guide Template</h4>
-              <pre className="text-xs text-green-700 overflow-x-auto">
+            <div className="p-4 bg-success/10 rounded-lg border border-success/20">
+              <h4 className="font-semibold text-success mb-2">Setup Guide Template</h4>
+              <pre className="text-xs text-success/80 overflow-x-auto">
 {`## Installation
 1. Clone repository
 2. Install dependencies
@@ -396,9 +422,9 @@ Response:
               </pre>
             </div>
 
-            <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <h4 className="font-semibold text-purple-800 mb-2">User Guide Template</h4>
-              <pre className="text-xs text-purple-700 overflow-x-auto">
+            <div className="p-4 bg-secondary/10 rounded-lg border border-secondary/20">
+              <h4 className="font-semibold text-secondary mb-2">User Guide Template</h4>
+              <pre className="text-xs text-secondary/80 overflow-x-auto">
 {`## How to [Task]
 1. Navigate to [page]
 2. Click [button]
@@ -411,9 +437,9 @@ Response:
               </pre>
             </div>
 
-            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-              <h4 className="font-semibold text-orange-800 mb-2">Code Standards Template</h4>
-              <pre className="text-xs text-orange-700 overflow-x-auto">
+            <div className="p-4 bg-warning/10 rounded-lg border border-warning/20">
+              <h4 className="font-semibold text-warning mb-2">Code Standards Template</h4>
+              <pre className="text-xs text-warning/80 overflow-x-auto">
 {`## Naming Conventions
 - Variables: camelCase
 - Functions: camelCase
@@ -428,7 +454,7 @@ Response:
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
     </div>
   );
 };

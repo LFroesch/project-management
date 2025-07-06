@@ -14,6 +14,9 @@ export default {
     themes: ["dim", "light", "dark", "cupcake",
       "bumblebee", "emerald", "corporate", "synthwave",
       "retro", "cyberpunk", "valentine", "halloween",
-      "garden", "forest", "aqua", "sunset"],
+      "garden", "forest", "aqua", "sunset", "lofi",
+      "pastel", "fantasy", "wireframe", "black",
+      "luxury", "dracula", "cmyk", "autumn", "business",
+      "acid", "lemonade", "night", "coffee", "winter"],
   },
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Project, projectAPI } from '../api/client';
-import CollapsibleSection from '../components/CollapsibleSection';
 
 interface ContextType {
   selectedProject: Project | null;
@@ -120,7 +119,6 @@ const SettingsPage: React.FC = () => {
     if (!selectedProject) return;
 
     try {
-      // We'll need to add this API endpoint
       await projectAPI.deleteLink(selectedProject.id, linkId);
       await onProjectRefresh();
     } catch (err) {
@@ -136,7 +134,6 @@ const SettingsPage: React.FC = () => {
 
     try {
       await onProjectArchive(selectedProject.id, !selectedProject.isArchived);
-      // The onProjectArchive function should handle the refresh, but let's add it just in case
       await onProjectRefresh();
     } catch (err) {
       setError('Failed to update project archive status');
@@ -173,8 +170,12 @@ const SettingsPage: React.FC = () => {
 
   if (!selectedProject) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        Select a project to view settings
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚙️</div>
+          <h2 className="text-2xl font-bold mb-2">Select a project</h2>
+          <p className="text-base-content/60">Choose a project from the sidebar to view settings</p>
+        </div>
       </div>
     );
   }
@@ -187,29 +188,36 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="p-8 space-y-6">
       {error && (
-        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="alert alert-error">
+          <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
         </div>
       )}
 
       {/* Project Information */}
-      <CollapsibleSection title="Project Information" defaultOpen={true}>
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" defaultChecked />
+        <div className="collapse-title text-xl font-medium">
+          📋 Project Information
+        </div>
+        <div className="collapse-content">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Basic Info</h3>
+            <h3 className="text-lg font-semibold">Basic Info</h3>
             <div className="flex space-x-2">
               {isEditingBasic ? (
                 <>
                   <button
                     onClick={() => handleCancel('basic')}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="btn btn-ghost btn-sm"
                     disabled={savingBasic}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveBasic}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="btn btn-primary btn-sm"
                     disabled={savingBasic}
                   >
                     {savingBasic ? 'Saving...' : 'Save'}
@@ -218,7 +226,7 @@ const SettingsPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditingBasic(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="btn btn-outline btn-sm"
                 >
                   Edit
                 </button>
@@ -228,99 +236,99 @@ const SettingsPage: React.FC = () => {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Project Name
+              <label className="label">
+                <span className="label-text font-medium">Project Name</span>
               </label>
               {isEditingBasic ? (
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   placeholder="Enter project name..."
                   required
                 />
               ) : (
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <p className="text-gray-700 font-sm">{name}</p>
+                <div className="p-3 bg-base-200 rounded-lg border border-base-300">
+                  <p className="font-medium">{name}</p>
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
+              <label className="label">
+                <span className="label-text font-medium">Description</span>
               </label>
               {isEditingBasic ? (
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full h-24 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="textarea textarea-bordered w-full h-24 resize-none"
                   placeholder="Enter project description..."
                   required
                 />
               ) : (
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <p className="text-gray-700 font-sm">{description}</p>
+                <div className="p-3 bg-base-200 rounded-lg border border-base-300">
+                  <p>{description}</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">Metadata</h3>
-              <div className="flex space-x-2">
-                {isEditingMetadata ? (
-                  <>
-                    <button
-                      onClick={() => handleCancel('metadata')}
-                      className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                      disabled={savingMetadata}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSaveMetadata}
-                      className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                      disabled={savingMetadata}
-                    >
-                      {savingMetadata ? 'Saving...' : 'Save'}
-                    </button>
-                  </>
-                ) : (
+          <div className="divider">Metadata</div>
+
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Metadata</h3>
+            <div className="flex space-x-2">
+              {isEditingMetadata ? (
+                <>
                   <button
-                    onClick={() => setIsEditingMetadata(true)}
-                    className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                    onClick={() => handleCancel('metadata')}
+                    className="btn btn-ghost btn-sm"
+                    disabled={savingMetadata}
                   >
-                    Edit
+                    Cancel
                   </button>
-                )}
-              </div>
+                  <button
+                    onClick={handleSaveMetadata}
+                    className="btn btn-primary btn-sm"
+                    disabled={savingMetadata}
+                  >
+                    {savingMetadata ? 'Saving...' : 'Save'}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setIsEditingMetadata(true)}
+                  className="btn btn-outline btn-sm"
+                >
+                  Edit
+                </button>
+              )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Staging Environment
+              <label className="label">
+                <span className="label-text font-medium">Staging Environment</span>
               </label>
               {isEditingMetadata ? (
                 <select
                   value={stagingEnvironment}
                   onChange={(e) => setStagingEnvironment(e.target.value as 'development' | 'staging' | 'production')}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="select select-bordered w-full"
                 >
                   <option value="development">Development</option>
                   <option value="staging">Staging</option>
                   <option value="production">Production</option>
                 </select>
               ) : (
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    stagingEnvironment === 'production' ? 'bg-red-100 text-red-800' :
-                    stagingEnvironment === 'staging' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-green-100 text-green-800'
+                <div className="p-3 bg-base-200 rounded-lg border border-base-300">
+                  <span className={`badge ${
+                    stagingEnvironment === 'production' ? 'badge-error' :
+                    stagingEnvironment === 'staging' ? 'badge-warning' :
+                    'badge-success'
                   }`}>
                     {stagingEnvironment.charAt(0).toUpperCase() + stagingEnvironment.slice(1)}
                   </span>
@@ -329,27 +337,27 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
+              <label className="label">
+                <span className="label-text font-medium">Category</span>
               </label>
               {isEditingMetadata ? (
                 <input
                   type="text"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   placeholder="Enter category..."
                 />
               ) : (
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <p className="text-gray-700">{category}</p>
+                <div className="p-3 bg-base-200 rounded-lg border border-base-300">
+                  <p>{category}</p>
                 </div>
               )}
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Project Color
+              <label className="label">
+                <span className="label-text font-medium">Project Color</span>
               </label>
               {isEditingMetadata ? (
                 <div className="space-y-2">
@@ -358,13 +366,13 @@ const SettingsPage: React.FC = () => {
                       type="color"
                       value={color}
                       onChange={(e) => setColor(e.target.value)}
-                      className="w-12 h-12 border border-gray-300 rounded-md cursor-pointer"
+                      className="w-12 h-12 border border-base-300 rounded-lg cursor-pointer"
                     />
                     <input
                       type="text"
                       value={color}
                       onChange={(e) => setColor(e.target.value)}
-                      className="flex-1 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input input-bordered flex-1"
                       placeholder="#3B82F6"
                     />
                   </div>
@@ -374,7 +382,7 @@ const SettingsPage: React.FC = () => {
                         key={presetColor}
                         onClick={() => setColor(presetColor)}
                         className={`w-8 h-8 rounded-md border-2 ${
-                          color === presetColor ? 'border-gray-800' : 'border-gray-300'
+                          color === presetColor ? 'border-base-content' : 'border-base-300'
                         }`}
                         style={{ backgroundColor: presetColor }}
                       />
@@ -382,21 +390,21 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="p-3 bg-gray-50 rounded-md">
+                <div className="p-3 bg-base-200 rounded-lg border border-base-300">
                   <div className="flex items-center space-x-3">
                     <div 
-                      className="w-8 h-8 rounded-md border border-gray-300"
+                      className="w-8 h-8 rounded-md border border-base-300"
                       style={{ backgroundColor: color }}
                     ></div>
-                    <span className="text-gray-700 font-mono">{color}</span>
+                    <span className="font-mono">{color}</span>
                   </div>
                 </div>
               )}
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
+              <label className="label">
+                <span className="label-text font-medium">Tags</span>
               </label>
               {isEditingMetadata ? (
                 <div className="space-y-2">
@@ -405,13 +413,13 @@ const SettingsPage: React.FC = () => {
                       type="text"
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
-                      className="flex-1 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input input-bordered flex-1"
                       placeholder="Add a tag..."
                       onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
                     />
                     <button
                       onClick={handleAddTag}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                      className="btn btn-primary"
                     >
                       Add
                     </button>
@@ -420,12 +428,12 @@ const SettingsPage: React.FC = () => {
                     {tags.map((tag) => (
                       <span
                         key={tag}
-                        className="flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                        className="badge badge-info gap-2"
                       >
                         {tag}
                         <button
                           onClick={() => handleRemoveTag(tag)}
-                          className="ml-2 text-blue-600 hover:text-blue-800"
+                          className="text-info-content hover:text-error"
                         >
                           ×
                         </button>
@@ -434,15 +442,15 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="p-3 bg-gray-50 rounded-md">
+                <div className="p-3 bg-base-200 rounded-lg border border-base-300">
                   <div className="flex flex-wrap gap-2">
                     {tags.length === 0 ? (
-                      <span className="text-gray-500 italic">No tags</span>
+                      <span className="text-base-content/60 italic">No tags</span>
                     ) : (
                       tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                          className="badge badge-info"
                         >
                           {tag}
                         </span>
@@ -454,32 +462,36 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Project Links */}
-      <CollapsibleSection title={`Project Links (${selectedProject.links?.length || 0})`}>
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          🔗 Project Links ({selectedProject.links?.length || 0})
+        </div>
+        <div className="collapse-content">
           <div className="mb-4">
-            <h4 className="font-medium text-gray-800 mb-3">Add New Link</h4>
+            <h4 className="font-medium mb-3">Add New Link</h4>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
               <input
                 type="text"
                 value={newLink.title}
                 onChange={(e) => setNewLink({...newLink, title: e.target.value})}
-                className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input input-bordered border-base-300"
                 placeholder="Link title..."
               />
               <input
                 type="url"
                 value={newLink.url}
                 onChange={(e) => setNewLink({...newLink, url: e.target.value})}
-                className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input input-bordered border-base-300"
                 placeholder="https://..."
               />
               <select
                 value={newLink.type}
                 onChange={(e) => setNewLink({...newLink, type: e.target.value as any})}
-                className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="select select-bordered border-base-300"
               >
                 <option value="other">Other</option>
                 <option value="github">GitHub</option>
@@ -489,7 +501,7 @@ const SettingsPage: React.FC = () => {
               <button
                 onClick={handleAddLink}
                 disabled={addingLink || !newLink.title.trim() || !newLink.url.trim()}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                className="btn btn-success"
               >
                 {addingLink ? 'Adding...' : 'Add Link'}
               </button>
@@ -498,14 +510,15 @@ const SettingsPage: React.FC = () => {
 
           <div className="space-y-2">
             {selectedProject.links?.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                No links yet. Add one above!
+              <div className="text-center py-8">
+                <div className="text-4xl mb-4">🔗</div>
+                <p className="text-base-content/60">No links yet. Add one above!</p>
               </div>
             ) : (
               selectedProject.links?.map((link) => (
                 <div
                   key={link.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100"
+                  className="flex items-center justify-between p-3 bg-base-200 rounded-lg border border-base-300 hover:bg-base-300"
                 >
                   <div className="flex items-center space-x-3">
                     <span className="text-2xl">
@@ -518,22 +531,22 @@ const SettingsPage: React.FC = () => {
                         href={link.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                        className="link link-primary font-medium"
                       >
                         {link.title}
                       </a>
-                      <div className="text-gray-500 text-sm">
+                      <div className="text-base-content/60 text-sm">
                         {link.url}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs text-gray-500 px-2 py-1 bg-gray-200 rounded">
+                    <span className="badge badge-outline">
                       {link.type}
                     </span>
                     <button
                       onClick={() => handleDeleteLink(link.id)}
-                      className="text-red-600 hover:text-red-800 text-sm px-2 py-1 rounded hover:bg-red-50"
+                      className="btn btn-error btn-outline btn-sm"
                     >
                       Delete
                     </button>
@@ -543,42 +556,42 @@ const SettingsPage: React.FC = () => {
             )}
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Project Status */}
-      <CollapsibleSection title="Project Status">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          📊 Project Status
+        </div>
+        <div className="collapse-content">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h4 className="font-medium text-gray-800 mb-2">Current Status</h4>
+              <h4 className="font-medium mb-2">Current Status</h4>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Archive Status:</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  <span>Archive Status:</span>
+                  <span className={`badge ${
                     selectedProject.isArchived 
-                      ? 'bg-gray-100 text-gray-800' 
-                      : 'bg-green-100 text-green-800'
+                      ? 'badge-ghost' 
+                      : 'badge-success'
                   }`}>
                     {selectedProject.isArchived ? 'Archived' : 'Active'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Sharing Status:</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  <span>Sharing Status:</span>
+                  <span className={`badge ${
                     selectedProject.isShared
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-800'
+                      ? 'badge-info'
+                      : 'badge-ghost'
                   }`}>
                     {selectedProject.isShared ? 'Shared' : 'Private'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Deployment Status:</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    selectedProject.isShared
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
+                  <span>Deployment Status:</span>
+                  <span className="badge badge-ghost">
                     Coming Soon
                   </span>
                 </div>
@@ -586,8 +599,8 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="font-medium text-gray-800 mb-2">Timestamps</h4>
-              <div className="space-y-2 text-sm text-gray-600">
+              <h4 className="font-medium mb-2">Timestamps</h4>
+              <div className="space-y-2 text-sm">
                 <div>
                   <span className="font-medium">Created:</span> {new Date(selectedProject.createdAt).toLocaleDateString()}
                 </div>
@@ -602,23 +615,27 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Danger Zone */}
-      <CollapsibleSection title="Danger Zone">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium text-error">
+          ⚠️ Danger Zone
+        </div>
+        <div className="collapse-content">
           <div className="space-y-4">
-            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <h4 className="font-semibold text-yellow-800">{selectedProject.isArchived ? 'Unarchive Project' : 'Archive Project'}</h4>
-              <p className="text-yellow-600 text-sm mb-4">
+            <div className="p-4 bg-warning/10 rounded-lg border border-warning/20">
+              <h4 className="font-semibold text-warning mb-2">{selectedProject.isArchived ? 'Unarchive Project' : 'Archive Project'}</h4>
+              <p className="text-warning/80 text-sm mb-4">
                 {selectedProject.isArchived ? 'Make this project active again' : 'Move this project to archived section'}
               </p>
               <button
                 onClick={handleArchiveToggle}
-                className={`px-4 py-2 rounded-md font-medium disabled:opacity-50 ${
+                className={`btn ${
                   selectedProject.isArchived 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'bg-yellow-600 text-white hover:bg-yellow-700'
+                    ? 'btn-info' 
+                    : 'btn-warning'
                 }`}
                 disabled={archiveLoading}
               >
@@ -626,25 +643,25 @@ const SettingsPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-              <h4 className="font-semibold text-red-800 mb-2">Delete Project</h4>
-              <p className="text-red-600 text-sm mb-4">
+            <div className="p-4 bg-error/10 rounded-lg border border-error/20">
+              <h4 className="font-semibold text-error mb-2">Delete Project</h4>
+              <p className="text-error/80 text-sm mb-4">
                 This action cannot be undone. This will permanently delete the project and all of its data.
               </p>
               
               {deleteConfirm ? (
                 <div className="space-y-3">
-                  <p className="text-red-600 text-sm font-medium">Are you sure you want to delete this project?</p>
+                  <p className="text-error font-medium">Are you sure you want to delete this project?</p>
                   <div className="flex space-x-2">
                     <button
                       onClick={handleDelete}
-                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                      className="btn btn-error"
                     >
                       Yes, Delete Project
                     </button>
                     <button
                       onClick={() => setDeleteConfirm(false)}
-                      className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                      className="btn btn-ghost"
                     >
                       Cancel
                     </button>
@@ -653,7 +670,7 @@ const SettingsPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setDeleteConfirm(true)}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  className="btn btn-error"
                 >
                   Delete Project
                 </button>
@@ -661,7 +678,7 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
     </div>
   );
 };

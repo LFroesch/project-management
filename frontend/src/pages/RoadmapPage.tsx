@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Project } from '../api/client';
-import CollapsibleSection from '../components/CollapsibleSection';
 
 interface ContextType {
   selectedProject: Project | null;
@@ -45,8 +44,12 @@ const RoadmapPage: React.FC = () => {
 
   if (!selectedProject) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        Select a project to view roadmap
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🗺️</div>
+          <h2 className="text-2xl font-bold mb-2">Select a project</h2>
+          <p className="text-base-content/60">Choose a project from the sidebar to view roadmap</p>
+        </div>
       </div>
     );
   }
@@ -60,29 +63,36 @@ const RoadmapPage: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="alert alert-error">
+          <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
         </div>
       )}
 
       {/* Development Roadmap Section */}
-      <CollapsibleSection title="Development Roadmap" defaultOpen={true}>
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" defaultChecked />
+        <div className="collapse-title text-xl font-medium">
+          🗺️ Development Roadmap {roadmap && '(Has Content)'}
+        </div>
+        <div className="collapse-content">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Project timeline from inception to deployment</p>
+            <p className="text-base-content/60">Project timeline from inception to deployment</p>
             <div className="flex space-x-2">
               {isEditingRoadmap ? (
                 <>
                   <button
                     onClick={handleCancel}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="btn btn-ghost btn-sm"
                     disabled={loading}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveRoadmap}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="btn btn-primary btn-sm"
                     disabled={loading}
                   >
                     {loading ? 'Saving...' : 'Save'}
@@ -91,7 +101,7 @@ const RoadmapPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditingRoadmap(true)}
-                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="btn btn-outline btn-sm"
                 >
                   Edit
                 </button>
@@ -103,195 +113,213 @@ const RoadmapPage: React.FC = () => {
             <textarea
               value={roadmap}
               onChange={(e) => setRoadmap(e.target.value)}
-              className="w-full h-64 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="textarea textarea-bordered w-full h-64 resize-none"
               placeholder="Enter your development roadmap here..."
             />
           ) : (
-            <div className="min-h-64 p-4 bg-gray-50 rounded-md">
-              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                {roadmap || 'No roadmap defined yet...'}
-              </div>
+            <div className="min-h-64 p-4 bg-base-200 rounded-lg border border-base-300 ">
+              {roadmap ? (
+                <div className="whitespace-pre-wrap leading-relaxed">
+                  {roadmap}
+                </div>
+              ) : (
+                <div className="text-base-content/60 italic">
+                  No roadmap defined yet. Click Edit to add your development timeline.
+                </div>
+              )}
             </div>
           )}
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Current Tech Stack Section */}
-      <CollapsibleSection title="Current Technology Stack" defaultOpen={true}>
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" defaultChecked />
+        <div className="collapse-title text-xl font-medium">
+          🔧 Current Technology Stack
+        </div>
+        <div className="collapse-content">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-semibold text-gray-800 mb-3">Frontend</h4>
+              <h4 className="font-semibold mb-3 text-lg">Frontend</h4>
               <div className="space-y-2">
-                <div className="flex items-center p-2 bg-blue-50 rounded">
+                <div className="flex items-center p-3 bg-info/10 rounded-lg border border-info/20">
                   <span className="text-2xl mr-3">⚛️</span>
                   <div>
                     <div className="font-medium">React 18</div>
-                    <div className="text-sm text-gray-600">UI Library</div>
+                    <div className="text-sm text-base-content/60">UI Library</div>
                   </div>
                 </div>
-                <div className="flex items-center p-2 bg-blue-50 rounded">
+                <div className="flex items-center p-3 bg-info/10 rounded-lg border border-info/20">
                   <span className="text-2xl mr-3">🔷</span>
                   <div>
                     <div className="font-medium">TypeScript</div>
-                    <div className="text-sm text-gray-600">Type Safety</div>
+                    <div className="text-sm text-base-content/60">Type Safety</div>
                   </div>
                 </div>
-                <div className="flex items-center p-2 bg-cyan-50 rounded">
+                <div className="flex items-center p-3 bg-accent/10 rounded-lg border border-accent/20">
                   <span className="text-2xl mr-3">🎨</span>
                   <div>
-                    <div className="font-medium">Tailwind CSS</div>
-                    <div className="text-sm text-gray-600">Styling</div>
+                    <div className="font-medium">DaisyUI + Tailwind</div>
+                    <div className="text-sm text-base-content/60">Styling</div>
                   </div>
                 </div>
-                <div className="flex items-center p-2 bg-purple-50 rounded">
+                <div className="flex items-center p-3 bg-secondary/10 rounded-lg border border-secondary/20">
                   <span className="text-2xl mr-3">🚀</span>
                   <div>
                     <div className="font-medium">Vite</div>
-                    <div className="text-sm text-gray-600">Build Tool</div>
+                    <div className="text-sm text-base-content/60">Build Tool</div>
                   </div>
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-800 mb-3">Backend</h4>
+              <h4 className="font-semibold mb-3 text-lg">Backend</h4>
               <div className="space-y-2">
-                <div className="flex items-center p-2 bg-green-50 rounded">
+                <div className="flex items-center p-3 bg-success/10 rounded-lg border border-success/20">
                   <span className="text-2xl mr-3">🟢</span>
                   <div>
                     <div className="font-medium">Node.js</div>
-                    <div className="text-sm text-gray-600">Runtime</div>
+                    <div className="text-sm text-base-content/60">Runtime</div>
                   </div>
                 </div>
-                <div className="flex items-center p-2 bg-gray-50 rounded">
+                <div className="flex items-center p-3 bg-primary/10 rounded-lg border border-neutral/20">
                   <span className="text-2xl mr-3">🚂</span>
                   <div>
                     <div className="font-medium">Express.js</div>
-                    <div className="text-sm text-gray-600">Web Framework</div>
+                    <div className="text-sm text-base-content/60">Web Framework</div>
                   </div>
                 </div>
-                <div className="flex items-center p-2 bg-green-50 rounded">
+                <div className="flex items-center p-3 bg-success/10 rounded-lg border border-success/20">
                   <span className="text-2xl mr-3">🍃</span>
                   <div>
                     <div className="font-medium">MongoDB</div>
-                    <div className="text-sm text-gray-600">Database</div>
+                    <div className="text-sm text-base-content/60">Database</div>
                   </div>
                 </div>
-                <div className="flex items-center p-2 bg-orange-50 rounded">
+                <div className="flex items-center p-3 bg-warning/10 rounded-lg border border-warning/20">
                   <span className="text-2xl mr-3">🔐</span>
                   <div>
                     <div className="font-medium">JWT</div>
-                    <div className="text-sm text-gray-600">Authentication</div>
+                    <div className="text-sm text-base-content/60">Authentication</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Development Phases Section */}
-      <CollapsibleSection title="Development Phases">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          📋 Development Phases
+        </div>
+        <div className="collapse-content">
           <div className="space-y-4">
-            <div className="flex items-center p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            <div className="flex items-center p-4 bg-success/10 border border-success/20 rounded-lg">
+              <div className="flex-shrink-0 w-8 h-8 bg-success rounded-full flex items-center justify-center text-success-content font-bold text-sm">
                 ✓
               </div>
               <div className="ml-4 flex-1">
-                <h4 className="font-semibold text-green-800">Phase 1: Foundation</h4>
-                <p className="text-green-600 text-sm">Basic authentication, project CRUD, initial UI</p>
+                <h4 className="font-semibold text-success">Phase 1: Foundation</h4>
+                <p className="text-success/80 text-sm">Basic authentication, project CRUD, initial UI</p>
               </div>
-              <span className="text-green-600 text-sm font-medium">Completed</span>
+              <span className="badge badge-success">Completed</span>
             </div>
 
-            <div className="flex items-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            <div className="flex items-center p-4 bg-info/10 border border-info/20 rounded-lg">
+              <div className="flex-shrink-0 w-8 h-8 bg-info rounded-full flex items-center justify-center text-info-content font-bold text-sm">
                 2
               </div>
               <div className="ml-4 flex-1">
-                <h4 className="font-semibold text-blue-800">Phase 2: Enhanced Features</h4>
-                <p className="text-blue-600 text-sm">Todo management, dev logs, enhanced documentation</p>
+                <h4 className="font-semibold text-info">Phase 2: Enhanced Features</h4>
+                <p className="text-info/80 text-sm">Todo management, dev logs, enhanced documentation</p>
               </div>
-              <span className="text-blue-600 text-sm font-medium">In Progress</span>
+              <span className="badge badge-info">In Progress</span>
             </div>
 
-            <div className="flex items-center p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <div className="flex-shrink-0 w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            <div className="flex items-center p-4 bg-base-200 border border-base-300 rounded-lg">
+              <div className="flex-shrink-0 w-8 h-8 bg-base-300 rounded-full flex items-center justify-center text-base-content font-bold text-sm">
                 3
               </div>
               <div className="ml-4 flex-1">
-                <h4 className="font-semibold text-gray-800">Phase 3: Advanced Features</h4>
-                <p className="text-gray-600 text-sm">File uploads, real-time collaboration, mobile app</p>
+                <h4 className="font-semibold">Phase 3: Advanced Features</h4>
+                <p className="text-base-content/60 text-sm">File uploads, real-time collaboration, mobile app</p>
               </div>
-              <span className="text-gray-600 text-sm font-medium">Planned</span>
+              <span className="badge badge-ghost">Planned</span>
             </div>
 
-            <div className="flex items-center p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <div className="flex-shrink-0 w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            <div className="flex items-center p-4 bg-base-200 border border-base-300 rounded-lg">
+              <div className="flex-shrink-0 w-8 h-8 bg-base-300 rounded-full flex items-center justify-center text-base-content font-bold text-sm">
                 4
               </div>
               <div className="ml-4 flex-1">
-                <h4 className="font-semibold text-gray-800">Phase 4: Deployment & Scaling</h4>
-                <p className="text-gray-600 text-sm">Production deployment, monitoring, performance optimization</p>
+                <h4 className="font-semibold">Phase 4: Deployment & Scaling</h4>
+                <p className="text-base-content/60 text-sm">Production deployment, monitoring, performance optimization</p>
               </div>
-              <span className="text-gray-600 text-sm font-medium">Future</span>
+              <span className="badge badge-ghost">Future</span>
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
 
       {/* Planned Additions Section */}
-      <CollapsibleSection title="Planned Tech Stack Additions">
-        <div className="mt-4">
+      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          🚀 Planned Tech Stack Additions
+        </div>
+        <div className="collapse-content">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-semibold text-gray-800 mb-3">Performance & Scaling</h4>
-              <ul className="space-y-2 text-gray-600">
+              <h4 className="font-semibold mb-3">Performance & Scaling</h4>
+              <ul className="space-y-2">
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-red-500 rounded-full mr-3"></span>
-                  Redis (caching, sessions)
+                  <div className="w-2 h-2 bg-error rounded-full mr-3"></div>
+                  <span>Redis (caching, sessions)</span>
                 </li>
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
-                  AWS S3 (file storage)
+                  <div className="w-2 h-2 bg-info rounded-full mr-3"></div>
+                  <span>AWS S3 (file storage)</span>
                 </li>
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
-                  Elasticsearch (search)
+                  <div className="w-2 h-2 bg-success rounded-full mr-3"></div>
+                  <span>Elasticsearch (search)</span>
                 </li>
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
-                  SendGrid (email service)
+                  <div className="w-2 h-2 bg-secondary rounded-full mr-3"></div>
+                  <span>SendGrid (email service)</span>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-800 mb-3">Mobile & Desktop</h4>
-              <ul className="space-y-2 text-gray-600">
+              <h4 className="font-semibold mb-3">Mobile & Desktop</h4>
+              <ul className="space-y-2">
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
-                  React Native (mobile app)
+                  <div className="w-2 h-2 bg-info rounded-full mr-3"></div>
+                  <span>React Native (mobile app)</span>
                 </li>
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-gray-500 rounded-full mr-3"></span>
-                  Electron (desktop app)
+                  <div className="w-2 h-2 bg-neutral rounded-full mr-3"></div>
+                  <span>Electron (desktop app)</span>
                 </li>
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
-                  PWA capabilities
+                  <div className="w-2 h-2 bg-warning rounded-full mr-3"></div>
+                  <span>PWA capabilities</span>
                 </li>
                 <li className="flex items-center">
-                  <span className="w-2 h-2 bg-teal-500 rounded-full mr-3"></span>
-                  Offline sync
+                  <div className="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                  <span>Offline sync</span>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
     </div>
   );
 };

@@ -9,6 +9,20 @@ const Layout: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'cyberpunk';
+  });
+
+  // Apply theme on mount
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  }, [currentTheme]);
+
+  // Helper function to select and persist project
+  const handleProjectSelect = (project: Project) => {
+    setSelectedProject(project);
+    localStorage.setItem('selectedProjectId', project.id);
+  };
 
   const loadProjects = async () => {
     try {
@@ -16,20 +30,21 @@ const Layout: React.FC = () => {
       console.log('Projects loaded:', projectsResponse.projects);
       setProjects(projectsResponse.projects);
       
-      // If we have a selected project, update it with fresh data
-      if (selectedProject) {
-        const updatedProject = projectsResponse.projects.find(p => p.id === selectedProject.id);
-        if (updatedProject) {
-          setSelectedProject(updatedProject);
+      // Try to restore previously selected project
+      const savedProjectId = localStorage.getItem('selectedProjectId');
+      if (savedProjectId) {
+        const savedProject = projectsResponse.projects.find(p => p.id === savedProjectId);
+        if (savedProject) {
+          setSelectedProject(savedProject);
+          return;
         }
-      } else if (projectsResponse.projects.length > 0) {
-        // Default to first non-archived project
+      }
+      
+      // Fallback to first project if no saved project found
+      if (projectsResponse.projects.length > 0) {
         const activeProjects = projectsResponse.projects.filter(p => !p.isArchived);
-        if (activeProjects.length > 0) {
-          setSelectedProject(activeProjects[0]);
-        } else {
-          setSelectedProject(projectsResponse.projects[0]);
-        }
+        const defaultProject = activeProjects.length > 0 ? activeProjects[0] : projectsResponse.projects[0];
+        handleProjectSelect(defaultProject);
       }
     } catch (err) {
       console.error('Failed to load projects:', err);
@@ -46,14 +61,22 @@ const Layout: React.FC = () => {
         setUser(userResponse.user);
         setProjects(projectsResponse.projects);
         console.log('Initial projects:', projectsResponse.projects);
-        if (projectsResponse.projects.length > 0) {
-          // Default to first non-archived project
-          const activeProjects = projectsResponse.projects.filter(p => !p.isArchived);
-          if (activeProjects.length > 0) {
-            setSelectedProject(activeProjects[0]);
-          } else {
-            setSelectedProject(projectsResponse.projects[0]);
+        
+        // Try to restore previously selected project
+        const savedProjectId = localStorage.getItem('selectedProjectId');
+        if (savedProjectId) {
+          const savedProject = projectsResponse.projects.find(p => p.id === savedProjectId);
+          if (savedProject) {
+            setSelectedProject(savedProject);
+            return;
           }
+        }
+        
+        // Fallback to first project if no saved project found
+        if (projectsResponse.projects.length > 0) {
+          const activeProjects = projectsResponse.projects.filter(p => !p.isArchived);
+          const defaultProject = activeProjects.length > 0 ? activeProjects[0] : projectsResponse.projects[0];
+          handleProjectSelect(defaultProject);
         }
       } catch (err) {
         navigate('/login');
@@ -84,7 +107,6 @@ const Layout: React.FC = () => {
 
       const response = await projectAPI.update(projectId, updatedData);
       console.log('Update response:', response);
-      // Refresh the projects list to get the updated data
       await loadProjects();
       return response;
     } catch (error) {
@@ -96,10 +118,7 @@ const Layout: React.FC = () => {
   const handleProjectArchive = async (projectId: string, isArchived: boolean) => {
     try {
       await projectAPI.archive(projectId, isArchived);
-      // Refresh projects list
       await loadProjects();
-      // Keep the same project selected after archiving/unarchiving
-      // The loadProjects function will update the selectedProject with fresh data
     } catch (error) {
       console.error('Failed to archive project:', error);
       throw error;
@@ -109,9 +128,7 @@ const Layout: React.FC = () => {
   const handleProjectDelete = async (projectId: string) => {
     try {
       await projectAPI.delete(projectId);
-      // Refresh projects list
       await loadProjects();
-      // If we deleted the selected project, clear selection
       if (selectedProject?.id === projectId) {
         setSelectedProject(null);
       }
@@ -123,17 +140,17 @@ const Layout: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <div className="loading loading-spinner loading-lg"></div>
       </div>
     );
   }
 
   const tabs = [
-    { id: 'notes', label: 'Notes/Goals/Tasks', path: '/notes' },
-    { id: 'roadmap', label: 'Roadmap/Stack', path: '/roadmap' },
-    { id: 'docs', label: 'Documentation', path: '/docs' },
-    { id: 'settings', label: 'Settings/Info', path: '/settings' }
+    { id: 'notes', label: 'Notes / To Dos', path: '/notes' },
+    { id: 'roadmap', label: 'Stack / Progress', path: '/roadmap' },
+    { id: 'docs', label: 'Docs / Features', path: '/docs' },
+    { id: 'settings', label: 'Settings /Info', path: '/settings' }
   ];
 
   const currentTab = location.pathname.slice(1) || 'notes';
@@ -144,48 +161,71 @@ const Layout: React.FC = () => {
   const sharedProjects = projects.filter(p => p.isShared);
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
-      
-      {/* Fixed Header */}
-      <nav className="bg-white shadow-sm p-4 border-b border-gray-200">
+    <div className="min-h-screen bg-base-300 flex flex-col">
+      {/* Header */}
+      <div className="bg-base-100 border-b-2 border-base-content/20 p-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-bold">Project Manager</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span>Hello, {user?.firstName}!</span>
+          <h1 className="text-2xl font-bold">Project Manager</h1>
+          <div className="flex items-center gap-6">
+            <span className="text-lg">Hi, {user?.firstName}!</span>
             <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              onClick={() => navigate('/create-project')}
+              className="btn btn-primary btn-sm"
             >
-              Logout
+              Create Project
             </button>
+            <div className="dropdown dropdown-end">
+              <label tabIndex={0} className="btn btn-ghost btn-circle">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </label>
+              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                <li>
+                  <a onClick={() => navigate('/account-settings')}>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Account Settings
+                  </a>
+                </li>
+                <li>
+                  <a onClick={handleLogout} className="text-error">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </nav>
+      </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Fixed Sidebar */}
-        <div className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col">
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <div className="w-64 bg-base-200 border-r-2 border-base-content/20 p-6">
           {/* Search */}
-          <div className="mb-6">
+          <div className="mb-8">
             <input
               type="text"
-              placeholder="search"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search projects..."
+              className="input input-bordered w-full"
             />
           </div>
 
           {/* Current Projects */}
           <div className="mb-8">
-            <h3 className="font-semibold mb-3">Current</h3>
-            <div className="space-y-2">
+            <h3 className="font-bold mb-4 text-lg">Current</h3>
+            <div className="space-y-3">
               {currentProjects.length === 0 ? (
-                <div className="text-center py-4">
-                  <p className="text-gray-500 text-sm mb-3">No projects yet</p>
+                <div className="text-center py-8">
+                  <p className="text-base-content/60 mb-4">No projects yet</p>
                   <button
                     onClick={() => navigate('/create-project')}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                    className="btn btn-primary btn-sm"
                   >
                     Create Project
                   </button>
@@ -196,21 +236,20 @@ const Layout: React.FC = () => {
                     key={project.id}
                     onClick={() => {
                       console.log('Selecting project:', project);
-                      setSelectedProject(project);
+                      handleProjectSelect(project);
                     }}
-                    className={`flex items-center cursor-pointer p-2 rounded hover:bg-gray-50 ${
-                      selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
+                    className={`flex items-center cursor-pointer p-3 rounded-lg ${
+                      selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
                     }`}
                   >
-                    {/* Project color indicator */}
                     <div 
-                      className="w-3 h-3 rounded-full mr-3"
+                      className="w-4 h-4 rounded-full mr-3"
                       style={{ backgroundColor: project.color }}
                     ></div>
                     <div className="flex-1">
-                      <span className="text-sm font-medium">{project.name}</span>
+                      <span className="font-medium">{project.name}</span>
                       {project.category && project.category !== 'general' && (
-                        <div className="text-xs text-gray-500">{project.category}</div>
+                        <div className="text-sm text-base-content/60">{project.category}</div>
                       )}
                     </div>
                   </div>
@@ -221,10 +260,10 @@ const Layout: React.FC = () => {
 
           {/* Archived Projects */}
           <div className="mb-8">
-            <h3 className="font-semibold mb-3">Archived</h3>
-            <div className="space-y-2">
+            <h3 className="font-bold mb-4 text-lg">Archived</h3>
+            <div className="space-y-3">
               {archivedProjects.length === 0 ? (
-                <div className="text-sm text-gray-500 italic pl-2">
+                <div className="text-base-content/60 italic">
                   No archived projects
                 </div>
               ) : (
@@ -233,17 +272,17 @@ const Layout: React.FC = () => {
                     key={project.id}
                     onClick={() => {
                       console.log('Selecting archived project:', project);
-                      setSelectedProject(project);
+                      handleProjectSelect(project);
                     }}
-                    className={`flex items-center cursor-pointer p-2 rounded hover:bg-gray-50 ${
-                      selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
+                    className={`flex items-center cursor-pointer p-3 rounded-lg ${
+                      selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
                     }`}
                   >
                     <div 
-                      className="w-3 h-3 rounded-full mr-3"
+                      className="w-4 h-4 rounded-full mr-3"
                       style={{ backgroundColor: project.color }}
                     ></div>
-                    <span className="text-sm font-medium text-gray-600">{project.name}</span>
+                    <span className="font-medium text-base-content/70">{project.name}</span>
                   </div>
                 ))
               )}
@@ -252,10 +291,10 @@ const Layout: React.FC = () => {
 
           {/* Shared Projects */}
           <div className="mb-8">
-            <h3 className="font-semibold mb-3">Shared</h3>
-            <div className="space-y-2">
+            <h3 className="font-bold mb-4 text-lg">Shared</h3>
+            <div className="space-y-3">
               {sharedProjects.length === 0 ? (
-                <div className="text-sm text-gray-500 italic pl-2">
+                <div className="text-base-content/60 italic">
                   No shared projects
                 </div>
               ) : (
@@ -264,64 +303,71 @@ const Layout: React.FC = () => {
                     key={project.id}
                     onClick={() => {
                       console.log('Selecting shared project:', project);
-                      setSelectedProject(project);
+                      handleProjectSelect(project);
                     }}
-                    className={`flex items-center cursor-pointer p-2 rounded hover:bg-gray-50 ${
-                      selectedProject?.id === project.id ? 'bg-blue-50 border border-blue-200' : ''
+                    className={`flex items-center cursor-pointer p-3 rounded-lg ${
+                      selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
                     }`}
                   >
                     <div 
-                      className="w-3 h-3 rounded-full mr-3"
+                      className="w-4 h-4 rounded-full mr-3"
                       style={{ backgroundColor: project.color }}
                     ></div>
-                    <span className="text-sm font-medium text-gray-600">{project.name}</span>
+                    <span className="font-medium text-base-content/70">{project.name}</span>
                   </div>
                 ))
               )}
             </div>
           </div>
-
-          {/* Create Project Button */}
-          <div className="mt-auto">
-            <button
-              onClick={() => navigate('/create-project')}
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
-            >
-              + Create Project
-            </button>
-          </div>
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 bg-base-100 flex flex-col">
           {/* Tab Navigation */}
           {selectedProject && (
-            <div className="bg-white border-b border-gray-200 flex">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => navigate(tab.path)}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                    currentTab === tab.id
-                      ? 'border-blue-500 text-blue-600 bg-blue-50'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+            <div className="border-b-2 border-base-content/20 bg-base-200">
+              <div className="flex">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => navigate(tab.path)}
+                    className={`px-6 py-4 font-medium border-b-2 transition-colors ${
+                      currentTab === tab.id
+                        ? 'border-primary text-primary bg-base-100'
+                        : 'border-transparent hover:bg-base-300'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
           {/* Page Content */}
-          <div className="flex-1 overflow-auto bg-gray-50">
-            <Outlet context={{ 
-              selectedProject, 
-              onProjectUpdate: handleProjectUpdate,
-              onProjectArchive: handleProjectArchive,
-              onProjectDelete: handleProjectDelete,
-              onProjectRefresh: loadProjects
-            }} />
+          <div className="flex-1 overflow-auto">
+            {selectedProject ? (
+              <Outlet context={{ 
+                selectedProject, 
+                onProjectUpdate: handleProjectUpdate,
+                onProjectArchive: handleProjectArchive,
+                onProjectDelete: handleProjectDelete,
+                onProjectRefresh: loadProjects
+              }} />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold mb-4">Select a project to get started</h2>
+                  <p className="text-base-content/60 mb-6">Choose a project from the sidebar or create a new one</p>
+                  <button
+                    onClick={() => navigate('/create-project')}
+                    className="btn btn-primary"
+                  >
+                    Create Project
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

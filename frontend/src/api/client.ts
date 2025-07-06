@@ -18,12 +18,16 @@ export interface User {
 export interface Todo {
   id: string;
   text: string;
+  description?: string;
+  priority?: 'low' | 'medium' | 'high';
   completed: boolean;
   createdAt: string;
 }
 
 export interface DevLogEntry {
   id: string;
+  title?: string;
+  description?: string;
   entry: string;
   date: string;
 }
@@ -135,18 +139,26 @@ export interface UpdateProjectData {
 
 export interface CreateTodoData {
   text: string;
+  description?: string;
+  priority?: 'low' | 'medium' | 'high';
 }
 
 export interface UpdateTodoData {
   text?: string;
+  description?: string;
+  priority?: 'low' | 'medium' | 'high';
   completed?: boolean;
 }
 
 export interface CreateDevLogData {
+  title?: string;
+  description?: string;
   entry: string;
 }
 
 export interface UpdateDevLogData {
+  title?: string;
+  description?: string;
   entry: string;
 }
 
