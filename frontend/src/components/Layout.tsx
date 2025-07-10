@@ -12,16 +12,37 @@ const Layout: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState(() => {
     return localStorage.getItem('theme') || 'cyberpunk';
   });
+  const [collapsedSections, setCollapsedSections] = useState<{
+    current: boolean;
+    archived: boolean;
+    shared: boolean;
+  }>(() => {
+    const saved = localStorage.getItem('collapsedSections');
+    return saved ? JSON.parse(saved) : { current: false, archived: false, shared: false };
+  });
 
   // Apply theme on mount
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', currentTheme);
   }, [currentTheme]);
 
+  // Save collapsed sections to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+  }, [collapsedSections]);
+
   // Helper function to select and persist project
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     localStorage.setItem('selectedProjectId', project.id);
+  };
+
+  // Toggle section collapse
+  const toggleSection = (section: 'current' | 'archived' | 'shared') => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
   };
 
   const loadProjects = async () => {
@@ -202,7 +223,7 @@ const Layout: React.FC = () => {
         {/* Sidebar */}
         <div className="w-64 bg-base-200 border-r-2 border-base-content/20 p-6">
           {/* Search */}
-          <div className="mb-8">
+          <div className="mb-4">
             <input
               type="text"
               placeholder="Search projects..."
@@ -210,113 +231,183 @@ const Layout: React.FC = () => {
             />
             <button
               onClick={() => navigate('/create-project')}
-              className="btn btn-primary btn-sm mt-4 mx-auto block"
+              className="btn btn-primary w-full mt-4"
             >
               Create Project
             </button>
           </div>
           {/* Current Projects */}
-          <div className="mb-8">
-            <h3 className="font-bold mb-4 text-lg">Current</h3>
-            <div className="space-y-3">
-              {currentProjects.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-base-content/60 mb-4">No projects yet</p>
-                  <button
-                    onClick={() => navigate('/create-project')}
-                    className="btn btn-primary btn-sm"
-                  >
-                    Create Project
-                  </button>
-                </div>
-              ) : (
-                currentProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    onClick={() => {
-                      console.log('Selecting project:', project);
-                      handleProjectSelect(project);
-                    }}
-                    className={`flex items-center cursor-pointer p-3 rounded-lg ${
-                      selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
-                    }`}
-                  >
-                    <div 
-                      className="w-4 h-4 rounded-full mr-3"
-                      style={{ backgroundColor: project.color }}
-                    ></div>
-                    <div className="flex-1">
-                      <span className="font-medium">{project.name}</span>
-                      {project.category && project.category !== 'general' && (
-                        <div className="text-sm text-base-content/60">{project.category}</div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+          <div className="mb-4">
+            <div 
+              className="flex items-center justify-between cursor-pointer mb-4"
+              onClick={() => toggleSection('current')}
+            >
+              <h3 className="font-bold text-lg text-info flex items-center">
+                Current
+                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
+                  {currentProjects.length}
+                </span>
+              </h3>
+              <svg 
+                className={`w-5 h-5 transition-transform ${collapsedSections.current ? 'rotate-180' : ''}`}
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
+            {!collapsedSections.current && (
+              <div className="space-y-0.5">
+                {currentProjects.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-base-content/60 mb-4">No projects yet</p>
+                    <button
+                      onClick={() => navigate('/create-project')}
+                      className="btn btn-primary btn-sm"
+                    >
+                      Create Project
+                    </button>
+                  </div>
+                ) : (
+                  currentProjects.map((project) => (
+                    <div
+                      key={project.id}
+                      onClick={() => {
+                        console.log('Selecting project:', project);
+                        handleProjectSelect(project);
+                      }}
+                      className={`flex items-center cursor-pointer p-3 rounded-lg ${
+                        selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
+                      }`}
+                    >
+                      <div 
+                        className="w-4 h-4 rounded-full mr-3"
+                        style={{ backgroundColor: project.color }}
+                      ></div>
+                      <div className="flex-1">
+                        <span className="font-medium">{project.name}</span>
+                        {project.category && project.category !== 'general' && (
+                          <div className="text-sm text-base-content/60">{project.category}</div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* Archived Projects */}
-          <div className="mb-8">
-            <h3 className="font-bold mb-4 text-lg">Archived</h3>
-            <div className="space-y-3">
-              {archivedProjects.length === 0 ? (
-                <div className="text-base-content/60 italic">
-                  No archived projects
-                </div>
-              ) : (
-                archivedProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    onClick={() => {
-                      console.log('Selecting archived project:', project);
-                      handleProjectSelect(project);
-                    }}
-                    className={`flex items-center cursor-pointer p-3 rounded-lg ${
-                      selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
-                    }`}
-                  >
-                    <div 
-                      className="w-4 h-4 rounded-full mr-3"
-                      style={{ backgroundColor: project.color }}
-                    ></div>
-                    <span className="font-medium text-base-content/70">{project.name}</span>
-                  </div>
-                ))
-              )}
+          <div className="mb-4">
+            <div 
+              className="flex items-center justify-between cursor-pointer mb-4"
+              onClick={() => toggleSection('archived')}
+            >
+              <h3 className="font-bold text-lg text-error flex items-center">
+                Archived
+                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
+                  {archivedProjects.length}
+                </span>
+              </h3>
+              <svg 
+                className={`w-5 h-5 transition-transform ${collapsedSections.archived ? 'rotate-180' : ''}`}
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
+            {!collapsedSections.archived && (
+              <div className="space-y-0.5">
+                {archivedProjects.length === 0 ? (
+                  <div className="text-base-content/60 italic">
+                    No archived projects
+                  </div>
+                ) : (
+                  archivedProjects.map((project) => (
+                    <div
+                      key={project.id}
+                      onClick={() => {
+                        console.log('Selecting archived project:', project);
+                        handleProjectSelect(project);
+                      }}
+                      className={`flex items-center cursor-pointer p-3 rounded-lg ${
+                        selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
+                      }`}
+                    >
+                      <div 
+                        className="w-4 h-4 rounded-full mr-3"
+                        style={{ backgroundColor: project.color }}
+                      ></div>
+                      <div className="flex-1">
+                        <span className="font-medium">{project.name}</span>
+                        {project.category && project.category !== 'general' && (
+                          <div className="text-sm text-base-content/60">{project.category}</div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* Shared Projects */}
-          <div className="mb-8">
-            <h3 className="font-bold mb-4 text-lg">Shared</h3>
-            <div className="space-y-3">
-              {sharedProjects.length === 0 ? (
-                <div className="text-base-content/60 italic">
-                  No shared projects
-                </div>
-              ) : (
-                sharedProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    onClick={() => {
-                      console.log('Selecting shared project:', project);
-                      handleProjectSelect(project);
-                    }}
-                    className={`flex items-center cursor-pointer p-3 rounded-lg ${
-                      selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
-                    }`}
-                  >
-                    <div 
-                      className="w-4 h-4 rounded-full mr-3"
-                      style={{ backgroundColor: project.color }}
-                    ></div>
-                    <span className="font-medium text-base-content/70">{project.name}</span>
-                  </div>
-                ))
-              )}
+          <div className="mb-4">
+            <div 
+              className="flex items-center justify-between cursor-pointer mb-4"
+              onClick={() => toggleSection('shared')}
+            >
+              <h3 className="font-bold text-lg text-warning flex items-center">
+                Shared
+                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
+                  {sharedProjects.length}
+                </span>
+              </h3>
+              <svg 
+                className={`w-5 h-5 transition-transform ${collapsedSections.shared ? 'rotate-180' : ''}`}
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
+            {!collapsedSections.shared && (
+              <div className="space-y-0.5">
+                {sharedProjects.length === 0 ? (
+                  <div className="text-base-content/60 italic">
+                    No shared projects
+                  </div>
+                ) : (
+                  sharedProjects.map((project) => (
+                    <div
+                      key={project.id}
+                      onClick={() => {
+                        console.log('Selecting shared project:', project);
+                        handleProjectSelect(project);
+                      }}
+                      className={`flex items-center cursor-pointer p-3 rounded-lg ${
+                        selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
+                      }`}
+                    >
+                      <div 
+                        className="w-4 h-4 rounded-full mr-3"
+                        style={{ backgroundColor: project.color }}
+                      ></div>
+                      <div className="flex-1">
+                        <span className="font-medium">{project.name}</span>
+                        {project.category && project.category !== 'general' && (
+                          <div className="text-sm text-base-content/60">{project.category}</div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         </div>
 
