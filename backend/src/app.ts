@@ -9,11 +9,11 @@ import projectRoutes from './routes/projects';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5003;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // Your frontend URL
+  origin: 'http://localhost:5002', // Your frontend URL
   credentials: true // Allow cookies to be sent
 }));
 app.use(cookieParser());
