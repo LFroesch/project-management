@@ -151,8 +151,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
   };
 
   return (
-    <div className="card bg-base-100 shadow-md mb-4">
-      <div className="card-body p-4">
+    <div className="bg-base-100 shadow-lg border border-base-content/10 rounded-lg mb-4">
+      <div className="p-4">
         {/* Header with title and controls */}
         <div className="flex items-center justify-between">
           <button
@@ -180,25 +180,52 @@ const NoteItem: React.FC<NoteItemProps> = ({
           </button>
           
           <div className="flex gap-2 ml-4">
-            <button
-              onClick={handleEditClick}
-              className="btn btn-sm btn-ghost"
-              disabled={isEditing}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Edit
-            </button>
-            <button
-              onClick={handleDeleteClick}
-              className="btn btn-sm btn-error btn-outline"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              Delete
-            </button>
+            {isEditing ? (
+              <>
+                <button
+                  onClick={handleSave}
+                  className="btn btn-sm btn-primary"
+                  disabled={loading || !editTitle.trim() || !editContent.trim()}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {loading ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="btn btn-sm btn-ghost"
+                  disabled={loading}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleEditClick}
+                  className="btn btn-sm btn-ghost"
+                  disabled={isEditing}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit
+                </button>
+                <button
+                  onClick={handleDeleteClick}
+                  className="btn btn-sm btn-error btn-outline"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -314,13 +341,14 @@ const NewNoteForm: React.FC<NewNoteFormProps> = ({ projectId, onAdd }) => {
   };
 
   return (
-    <div className="collapse collapse-arrow bg-base-100 shadow-md mb-4">
+    <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10 mb-4">
       <input type="checkbox" />
-      <div className="collapse-title text-xl font-medium">
-        ✨ Create New Note
+      <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+        Create New Note
       </div>
+      
       <div className="collapse-content">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-control">
               <label className="label">

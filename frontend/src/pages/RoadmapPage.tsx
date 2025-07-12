@@ -203,10 +203,10 @@ const RoadmapPage: React.FC = () => {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-6 space-y-6">
 
       {error && (
-        <div className="alert alert-error">
+        <div className="alert alert-error shadow-md">
           <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -216,145 +216,153 @@ const RoadmapPage: React.FC = () => {
       )}
 
       {/* Selected Technologies Display */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" defaultChecked />
-        <div className="collapse-title text-xl font-medium">
-          🔧 Selected Stack ({selectedProject.selectedTechnologies?.length || 0})
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Selected Stack ({selectedProject.selectedTechnologies?.length || 0})
         </div>
         <div className="collapse-content">
-          {selectedProject.selectedTechnologies?.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-4">🔧</div>
-              <p className="text-base-content/60">No technologies selected yet. Choose from the categories below!</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {TECH_CATEGORIES.map((category) => {
-                const selectedInCategory = selectedProject.selectedTechnologies.filter(
-                  tech => tech.category === category.id
-                );
-                if (selectedInCategory.length === 0) return null;
+          <div className="pt-4">
+            {selectedProject.selectedTechnologies?.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-4xl mb-4">🔧</div>
+                <p className="text-base-content/60">No technologies selected yet. Choose from the categories below!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {TECH_CATEGORIES.map((category) => {
+                  const selectedInCategory = selectedProject.selectedTechnologies.filter(
+                    tech => tech.category === category.id
+                  );
+                  if (selectedInCategory.length === 0) return null;
 
-                return (
-                  <div key={category.id} className="card bg-base-200 shadow-sm">
-                    <div className="card-body p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xl">{category.emoji}</span>
-                        <h3 className="font-semibold">{category.name}</h3>
-                      </div>
-                      <div className="space-y-2">
-                        {selectedInCategory.map((tech) => (
-                          <div key={tech.name} className="flex items-center justify-between p-2 bg-base-100 rounded border">
-                            <div>
-                              <span className="font-medium">{tech.name}</span>
-                              {tech.version && (
-                                <span className="text-xs text-base-content/60 ml-2">v{tech.version}</span>
-                              )}
+                  return (
+                    <div key={category.id} className="card bg-base-200 shadow-sm">
+                      <div className="card-body p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-xl">{category.emoji}</span>
+                          <h3 className="font-semibold">{category.name}</h3>
+                        </div>
+                        <div className="space-y-2">
+                          {selectedInCategory.map((tech) => (
+                            <div key={tech.name} className="flex items-center justify-between p-2 bg-base-100 rounded border">
+                              <div>
+                                <span className="font-medium">{tech.name}</span>
+                                {tech.version && (
+                                  <span className="text-xs text-base-content/60 ml-2">v{tech.version}</span>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => handleRemoveTechnology(tech.category, tech.name)}
+                                className="btn btn-ghost btn-xs text-error"
+                              >
+                                ×
+                              </button>
                             </div>
-                            <button
-                              onClick={() => handleRemoveTechnology(tech.category, tech.name)}
-                              className="btn btn-ghost btn-xs text-error"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Technology Selection */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          🛠️ Add Technologies
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Add Technologies
         </div>
         <div className="collapse-content">
-          <TechSelector
-            categories={TECH_CATEGORIES}
-            type="tech"
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
+          <div className="pt-4">
+            <TechSelector
+              categories={TECH_CATEGORIES}
+              type="tech"
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+          </div>
         </div>
       </div>
 
       {/* Package Selection */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          📦 Add Packages ({selectedProject.selectedPackages?.length || 0} selected)
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Add Packages ({selectedProject.selectedPackages?.length || 0} selected)
         </div>
         <div className="collapse-content">
-          <TechSelector
-            categories={PACKAGE_CATEGORIES}
-            type="package"
-            selectedCategory={selectedPackageCategory}
-            onCategoryChange={setSelectedPackageCategory}
-          />
+          <div className="pt-4">
+            <TechSelector
+              categories={PACKAGE_CATEGORIES}
+              type="package"
+              selectedCategory={selectedPackageCategory}
+              onCategoryChange={setSelectedPackageCategory}
+            />
+          </div>
         </div>
       </div>
 
       {/* Project Statistics */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          📊 Project Statistics
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Project Statistics
         </div>
         <div className="collapse-content">
-          <div className="stats stats-vertical lg:stats-horizontal shadow w-full">
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+          <div className="pt-4">
+            <div className="stats stats-vertical lg:stats-horizontal shadow w-full">
+              <div className="stat">
+                <div className="stat-figure text-primary">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div className="stat-title">Technologies</div>
+                <div className="stat-value text-primary">{selectedProject.selectedTechnologies?.length || 0}</div>
+                <div className="stat-desc">Core technologies selected</div>
               </div>
-              <div className="stat-title">Technologies</div>
-              <div className="stat-value text-primary">{selectedProject.selectedTechnologies?.length || 0}</div>
-              <div className="stat-desc">Core technologies selected</div>
-            </div>
 
-            <div className="stat">
-              <div className="stat-figure text-secondary">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
+              <div className="stat">
+                <div className="stat-figure text-secondary">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+                <div className="stat-title">Packages</div>
+                <div className="stat-value text-secondary">{selectedProject.selectedPackages?.length || 0}</div>
+                <div className="stat-desc">NPM packages added</div>
               </div>
-              <div className="stat-title">Packages</div>
-              <div className="stat-value text-secondary">{selectedProject.selectedPackages?.length || 0}</div>
-              <div className="stat-desc">NPM packages added</div>
-            </div>
 
-            <div className="stat">
-              <div className="stat-figure text-accent">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
+              <div className="stat">
+                <div className="stat-figure text-accent">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <div className="stat-title">Active Tasks</div>
+                <div className="stat-value text-accent">
+                  {selectedProject.todos?.filter(todo => !todo.completed).length || 0}
+                </div>
+                <div className="stat-desc">
+                  {selectedProject.todos?.filter(todo => todo.completed).length || 0} completed
+                </div>
               </div>
-              <div className="stat-title">Active Tasks</div>
-              <div className="stat-value text-accent">
-                {selectedProject.todos?.filter(todo => !todo.completed).length || 0}
-              </div>
-              <div className="stat-desc">
-                {selectedProject.todos?.filter(todo => todo.completed).length || 0} completed
-              </div>
-            </div>
 
-            <div className="stat">
-              <div className="stat-figure text-info">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+              <div className="stat">
+                <div className="stat-figure text-info">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <div className="stat-title">Documentation</div>
+                <div className="stat-value text-info">{selectedProject.docs?.length || 0}</div>
+                <div className="stat-desc">Documentation templates created</div>
               </div>
-              <div className="stat-title">Documentation</div>
-              <div className="stat-value text-info">{selectedProject.docs?.length || 0}</div>
-              <div className="stat-desc">Templates created</div>
             </div>
           </div>
         </div>

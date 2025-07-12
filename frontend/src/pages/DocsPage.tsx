@@ -229,9 +229,9 @@ React App:
   }, {} as Record<Doc['type'], Doc[]>);
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-6 space-y-6">
       {error && (
-        <div className="alert alert-error">
+        <div className="alert alert-error shadow-md">
           <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -239,14 +239,14 @@ React App:
         </div>
       )}
 
-      {/* Create New Template - Now Collapsible */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      {/* Create New Template */}
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          ✨ Create New Documentation Template
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Create New Documentation Template
         </div>
         <div className="collapse-content">
-          <div className="space-y-4">
+          <div className="pt-4 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="form-control">
                 <label className="label">
@@ -315,121 +315,122 @@ React App:
       {docTypes.map(typeInfo => {
         const docs = docsByType[typeInfo.value] || [];
         return (
-          <div key={typeInfo.value} className="collapse collapse-arrow bg-base-100 shadow-md">
+          <div key={typeInfo.value} className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
             <input type="checkbox" defaultChecked={docs.length > 0} />
-            <div className="collapse-title text-xl font-medium">
-              {typeInfo.emoji} {typeInfo.label} Templates ({docs.length})
+            <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+              {typeInfo.label} Templates ({docs.length})
               <div className="text-sm text-base-content/60 font-normal mt-1">
                 {typeInfo.description}
               </div>
             </div>
             <div className="collapse-content">
-              {docs.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="text-4xl mb-4">{typeInfo.emoji}</div>
-                  <p className="text-base-content/60">No {typeInfo.label.toLowerCase()} templates yet.</p>
-                  <p className="text-base-content/50 text-sm mt-2">{typeInfo.description}</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {docs.map(doc => (
-                    <div key={doc.id} className="card bg-base-200 shadow-sm">
-                      <div className="card-body p-4">
-                        {editingDoc === doc.id ? (
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div className="form-control">
-                                <label className="label">
-                                  <span className="label-text font-medium">Type</span>
-                                </label>
-                                <select
-                                  value={editData.type}
-                                  onChange={(e) => setEditData({...editData, type: e.target.value as Doc['type']})}
-                                  className="select select-bordered select-sm"
-                                >
-                                  {docTypes.map(type => (
-                                    <option key={type.value} value={type.value}>
-                                      {type.emoji} {type.label}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                              <div className="form-control md:col-span-2">
-                                <label className="label">
-                                  <span className="label-text font-medium">Title</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  value={editData.title}
-                                  onChange={(e) => setEditData({...editData, title: e.target.value})}
-                                  className="input input-bordered input-sm"
-                                />
-                              </div>
-                            </div>
-                            <div className="form-control">
-                              <label className="label">
-                                <span className="label-text font-medium">Content</span>
-                              </label>
-                              <textarea
-                                value={editData.content}
-                                onChange={(e) => setEditData({...editData, content: e.target.value})}
-                                className="textarea textarea-bordered h-[500px]"
-                              />
-                            </div>
-                            <div className="flex justify-end gap-2">
-                              <button onClick={handleCancelEdit} className="btn btn-ghost btn-sm">
-                                Cancel
-                              </button>
-                              <button onClick={handleSaveEdit} className="btn btn-primary btn-sm">
-                                Save
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="flex items-start justify-between mb-3">
-                              <div>
-                                <h3 className="font-semibold text-lg">{doc.title}</h3>
-                                <div className="text-xs text-base-content/50">
-                                  Created: {new Date(doc.createdAt).toLocaleDateString()}
-                                  {doc.updatedAt !== doc.createdAt && (
-                                    <> • Updated: {new Date(doc.updatedAt).toLocaleDateString()}</>
-                                  )}
+              <div className="pt-4">
+                {docs.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-4">{typeInfo.emoji}</div>
+                    <p className="text-base-content/60">No {typeInfo.label.toLowerCase()} templates yet. Create one above!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {docs.map(doc => (
+                      <div key={doc.id} className="card bg-base-200 shadow-sm border border-base-content/10">
+                        <div className="card-body p-4">
+                          {editingDoc === doc.id ? (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="form-control">
+                                  <label className="label">
+                                    <span className="label-text font-medium">Type</span>
+                                  </label>
+                                  <select
+                                    value={editData.type}
+                                    onChange={(e) => setEditData({...editData, type: e.target.value as Doc['type']})}
+                                    className="select select-bordered select-sm"
+                                  >
+                                    {docTypes.map(type => (
+                                      <option key={type.value} value={type.value}>
+                                        {type.emoji} {type.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <div className="form-control md:col-span-2">
+                                  <label className="label">
+                                    <span className="label-text font-medium">Title</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={editData.title}
+                                    onChange={(e) => setEditData({...editData, title: e.target.value})}
+                                    className="input input-bordered input-sm"
+                                  />
                                 </div>
                               </div>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleEditDoc(doc)}
-                                  className="btn btn-sm btn-ghost"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                  Edit
+                              <div className="form-control">
+                                <label className="label">
+                                  <span className="label-text font-medium">Content</span>
+                                </label>
+                                <textarea
+                                  value={editData.content}
+                                  onChange={(e) => setEditData({...editData, content: e.target.value})}
+                                  className="textarea textarea-bordered h-[500px]"
+                                />
+                              </div>
+                              <div className="flex justify-end gap-2">
+                                <button onClick={handleCancelEdit} className="btn btn-ghost btn-sm">
+                                  Cancel
                                 </button>
-                                <button
-                                  onClick={() => handleDeleteDoc(doc.id)}
-                                  className="btn btn-sm btn-error btn-outline"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                  Delete
+                                <button onClick={handleSaveEdit} className="btn btn-primary btn-sm">
+                                  Save
                                 </button>
                               </div>
                             </div>
-                            <div className="bg-base-100 rounded p-4 border border-base-300">
-                              <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
-                                {doc.content}
-                              </pre>
-                            </div>
-                          </>
-                        )}
+                          ) : (
+                            <>
+                              <div className="flex items-start justify-between mb-3">
+                                <div>
+                                  <h3 className="font-semibold text-lg">{doc.title}</h3>
+                                  <div className="text-xs text-base-content/50">
+                                    Created: {new Date(doc.createdAt).toLocaleDateString()}
+                                    {doc.updatedAt !== doc.createdAt && (
+                                      <> • Updated: {new Date(doc.updatedAt).toLocaleDateString()}</>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleEditDoc(doc)}
+                                    className="btn btn-sm btn-ghost"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteDoc(doc.id)}
+                                    className="btn btn-sm btn-error btn-outline"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="bg-base-100 rounded p-4 border border-base-300">
+                                <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                                  {doc.content}
+                                </pre>
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         );

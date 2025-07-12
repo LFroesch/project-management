@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { authAPI, projectAPI, Project } from '../api/client';
 
 const Layout: React.FC = () => {
@@ -176,26 +176,48 @@ const Layout: React.FC = () => {
 
   const currentTab = location.pathname.slice(1) || 'notes';
 
-  // Separate projects by archive status
-  const currentProjects = projects.filter(p => !p.isArchived);
-  const archivedProjects = projects.filter(p => p.isArchived);
-  const sharedProjects = projects.filter(p => p.isShared);
+  // Separate projects by archive status and sort alphabetically
+  const currentProjects = projects.filter(p => !p.isArchived).sort((a, b) => a.name.localeCompare(b.name));
+  const archivedProjects = projects.filter(p => p.isArchived).sort((a, b) => a.name.localeCompare(b.name));
+  const sharedProjects = projects.filter(p => p.isShared).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">
       {/* Header */}
-      <div className="bg-base-100 border-b-2 border-base-content/20 p-4">
+      <div className="bg-base-100 shadow-lg border-b border-base-content/10 p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Project Manager</h1>
-          <div className="flex items-center gap-6">
+          
+          {/* Middle section - Links - REMOVE IF PROD?*/}
+          <div className="flex items-center gap-3">
+            <a 
+              href="https://excalidraw.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn btn-outline btn-sm shadow-sm border-base-content/20"
+            >
+              Excalidraw
+            </a>
+            <a 
+              href="http://localhost:5004/posts" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn btn-outline btn-sm shadow-sm border-base-content/20"
+            >
+              Gator
+            </a>
+          </div>
+
+          {/* Right section - User info and settings */}
+          <div className="flex items-center gap-4">
             <span className="text-lg">Hi, {user?.firstName}!</span>
             <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="btn btn-ghost btn-circle">
+              <label tabIndex={0} className="btn btn-circle shadow-sm border border-base-content/10">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </label>
-              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <ul tabIndex={0} className="dropdown-content menu p-2 shadow-lg bg-base-100 border border-base-content/10 rounded-box w-52">
                 <li>
                   <a onClick={() => navigate('/account-settings')}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,30 +243,30 @@ const Layout: React.FC = () => {
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <div className="w-64 bg-base-200 border-r-2 border-base-content/20 p-6">
+        <div className="w-64 bg-base-100 shadow-lg border-r border-base-content/10 p-6">
           {/* Search */}
-          <div className="mb-4">
+          <div className="mb-6">
             <input
               type="text"
               placeholder="Search projects..."
-              className="input input-bordered w-full"
+              className="input input-bordered w-full shadow-sm"
             />
             <button
               onClick={() => navigate('/create-project')}
-              className="btn btn-primary w-full mt-4"
+              className="btn btn-primary w-full mt-4 shadow-sm"
             >
               Create Project
             </button>
           </div>
           {/* Current Projects */}
-          <div className="mb-4">
+          <div className="mb-6">
             <div 
-              className="flex items-center justify-between cursor-pointer mb-4"
+              className="flex items-center justify-between cursor-pointer mb-4 p-2 rounded-lg hover:bg-base-200 transition-colors"
               onClick={() => toggleSection('current')}
             >
               <h3 className="font-bold text-lg text-info flex items-center">
                 Current
-                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
+                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full shadow-sm">
                   {currentProjects.length}
                 </span>
               </h3>
@@ -258,13 +280,13 @@ const Layout: React.FC = () => {
               </svg>
             </div>
             {!collapsedSections.current && (
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {currentProjects.length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-base-content/60 mb-4">No projects yet</p>
                     <button
                       onClick={() => navigate('/create-project')}
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-primary btn-sm shadow-sm"
                     >
                       Create Project
                     </button>
@@ -277,12 +299,14 @@ const Layout: React.FC = () => {
                         console.log('Selecting project:', project);
                         handleProjectSelect(project);
                       }}
-                      className={`flex items-center cursor-pointer p-3 rounded-lg ${
-                        selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
+                      className={`flex items-center cursor-pointer p-3 rounded-lg border transition-all ${
+                        selectedProject?.id === project.id 
+                          ? 'bg-primary/20 border-primary/30 shadow-sm' 
+                          : 'hover:bg-base-200 border-transparent hover:border-base-content/10 hover:shadow-sm'
                       }`}
                     >
                       <div 
-                        className="w-4 h-4 rounded-full mr-3"
+                        className="w-4 h-4 rounded-full mr-3 shadow-sm"
                         style={{ backgroundColor: project.color }}
                       ></div>
                       <div className="flex-1">
@@ -299,14 +323,14 @@ const Layout: React.FC = () => {
           </div>
 
           {/* Archived Projects */}
-          <div className="mb-4">
+          <div className="mb-6">
             <div 
-              className="flex items-center justify-between cursor-pointer mb-4"
+              className="flex items-center justify-between cursor-pointer mb-4 p-2 rounded-lg hover:bg-base-200 transition-colors"
               onClick={() => toggleSection('archived')}
             >
               <h3 className="font-bold text-lg text-error flex items-center">
                 Archived
-                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
+                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full shadow-sm">
                   {archivedProjects.length}
                 </span>
               </h3>
@@ -320,9 +344,9 @@ const Layout: React.FC = () => {
               </svg>
             </div>
             {!collapsedSections.archived && (
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {archivedProjects.length === 0 ? (
-                  <div className="text-base-content/60 italic">
+                  <div className="text-base-content/60 italic p-3">
                     No archived projects
                   </div>
                 ) : (
@@ -333,12 +357,14 @@ const Layout: React.FC = () => {
                         console.log('Selecting archived project:', project);
                         handleProjectSelect(project);
                       }}
-                      className={`flex items-center cursor-pointer p-3 rounded-lg ${
-                        selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
+                      className={`flex items-center cursor-pointer p-3 rounded-lg border transition-all ${
+                        selectedProject?.id === project.id 
+                          ? 'bg-primary/20 border-primary/30 shadow-sm' 
+                          : 'hover:bg-base-200 border-transparent hover:border-base-content/10 hover:shadow-sm'
                       }`}
                     >
                       <div 
-                        className="w-4 h-4 rounded-full mr-3"
+                        className="w-4 h-4 rounded-full mr-3 shadow-sm"
                         style={{ backgroundColor: project.color }}
                       ></div>
                       <div className="flex-1">
@@ -355,14 +381,14 @@ const Layout: React.FC = () => {
           </div>
 
           {/* Shared Projects */}
-          <div className="mb-4">
+          <div className="mb-6">
             <div 
-              className="flex items-center justify-between cursor-pointer mb-4"
+              className="flex items-center justify-between cursor-pointer mb-4 p-2 rounded-lg hover:bg-base-200 transition-colors"
               onClick={() => toggleSection('shared')}
             >
               <h3 className="font-bold text-lg text-warning flex items-center">
                 Shared
-                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
+                <span className="ml-2 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full shadow-sm">
                   {sharedProjects.length}
                 </span>
               </h3>
@@ -376,9 +402,9 @@ const Layout: React.FC = () => {
               </svg>
             </div>
             {!collapsedSections.shared && (
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {sharedProjects.length === 0 ? (
-                  <div className="text-base-content/60 italic">
+                  <div className="text-base-content/60 italic p-3">
                     No shared projects
                   </div>
                 ) : (
@@ -389,12 +415,14 @@ const Layout: React.FC = () => {
                         console.log('Selecting shared project:', project);
                         handleProjectSelect(project);
                       }}
-                      className={`flex items-center cursor-pointer p-3 rounded-lg ${
-                        selectedProject?.id === project.id ? 'bg-primary/30' : 'hover:bg-base-300'
+                      className={`flex items-center cursor-pointer p-3 rounded-lg border transition-all ${
+                        selectedProject?.id === project.id 
+                          ? 'bg-primary/20 border-primary/30 shadow-sm' 
+                          : 'hover:bg-base-200 border-transparent hover:border-base-content/10 hover:shadow-sm'
                       }`}
                     >
                       <div 
-                        className="w-4 h-4 rounded-full mr-3"
+                        className="w-4 h-4 rounded-full mr-3 shadow-sm"
                         style={{ backgroundColor: project.color }}
                       ></div>
                       <div className="flex-1">
@@ -415,16 +443,16 @@ const Layout: React.FC = () => {
         <div className="flex-1 bg-base-100 flex flex-col">
           {/* Tab Navigation */}
           {selectedProject && (
-            <div className="border-b-2 border-base-content/20 bg-base-200">
+            <div className="bg-base-200 shadow-lg border-b border-base-content/10">
               <div className="flex">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => navigate(tab.path)}
-                    className={`px-6 py-4 font-medium border-b-2 transition-colors ${
+                    className={`px-6 py-4 font-medium border-b-2 transition-all ${
                       currentTab === tab.id
-                        ? 'border-primary text-primary bg-base-100'
-                        : 'border-transparent hover:bg-base-300'
+                        ? 'border-primary text-primary bg-base-100 shadow-sm'
+                        : 'border-transparent hover:bg-base-300 hover:shadow-sm'
                     }`}
                   >
                     {tab.label}
@@ -435,19 +463,21 @@ const Layout: React.FC = () => {
           )}
 
           {/* Page Content */}
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto border-2 border-base-content/10 bg-base-50 m-4 rounded-lg shadow-lg">
             {selectedProject ? (
-              <Outlet context={{ 
-                selectedProject, 
-                onProjectUpdate: handleProjectUpdate,
-                onProjectArchive: handleProjectArchive,
-                onProjectDelete: handleProjectDelete,
-                onProjectRefresh: loadProjects
-              }} />
+              <div className="p-1">
+                <Outlet context={{ 
+                  selectedProject, 
+                  onProjectUpdate: handleProjectUpdate,
+                  onProjectArchive: handleProjectArchive,
+                  onProjectDelete: handleProjectDelete,
+                  onProjectRefresh: loadProjects
+                }} />
+              </div>
             ) : (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">Select a project to get started</h2>
+                  <h2 className="text-2xl font-semibold mb-4">Select a project to get started</h2>
                   <p className="text-base-content/60 mb-6">Choose a project from the sidebar or create a new one</p>
                   <button
                     onClick={() => navigate('/create-project')}

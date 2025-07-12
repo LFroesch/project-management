@@ -1216,3 +1216,611 @@ Starting Project Manager at Thu Jul 10 17:30:34 PDT 2025
 [1] 
 [1] (node:426334) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 [1] (Use `node --trace-deprecation ...` to show where the warning was created)
+[1] Killed
+[1] npm run dev --prefix frontend exited with code 137
+[0] Killed
+[0] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+Starting Project Manager at Thu Jul 10 19:59:56 PDT 2025
+
+> project-manager@1.0.0 dev
+> concurrently "npm run dev --prefix backend" "npm run dev --prefix frontend"
+
+[0] 
+[0] > project-manager-backend@1.0.0 dev
+[0] > nodemon src/app.ts
+[0] 
+[1] 
+[1] > project-manager-frontend@1.0.0 dev
+[1] > vite
+[1] 
+[0] [33m[nodemon] 3.1.10[39m
+[0] [33m[nodemon] to restart at any time, enter `rs`[39m
+[0] [33m[nodemon] watching path(s): *.*[39m
+[0] [33m[nodemon] watching extensions: ts,json[39m
+[0] [32m[nodemon] starting `ts-node src/app.ts`[39m
+[1] 
+[1]   VITE v4.5.14  ready in 349 ms
+[1] 
+[1]   ➜  Local:   http://localhost:5002/
+[1]   ➜  Network: use --host to expose
+[0] Attempting to connect to MongoDB...
+[0] Connection string: mongodb+srv://lucasfroeschner:****@projectmanager.2veml9g.mongodb.net/project-manager?retryWrites=true&w=majority&appName=ProjectManager
+[0] Server running on port 5003
+[0] Connected to MongoDB successfully!
+[1] 
+[1] 🌼   daisyUI 4.12.24
+[1] ├─ ✔︎ 31 themes added		https://daisyui.com/docs/themes
+[1] ╰─ ❤︎ Support daisyUI project:	https://opencollective.com/daisyui
+[1] 
+[1] (node:566627) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[1] (Use `node --trace-deprecation ...` to show where the warning was created)
+[1] Killed
+[1] npm run dev --prefix frontend exited with code 137
+[0] Killed
+[0] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+Starting Project Manager at Thu Jul 10 22:24:33 PDT 2025
+
+> project-manager@1.0.0 dev
+> concurrently "npm run dev --prefix backend" "npm run dev --prefix frontend"
+
+[1] 
+[1] > project-manager-frontend@1.0.0 dev
+[1] > vite
+[1] 
+[0] 
+[0] > project-manager-backend@1.0.0 dev
+[0] > nodemon src/app.ts
+[0] 
+[0] [33m[nodemon] 3.1.10[39m
+[0] [33m[nodemon] to restart at any time, enter `rs`[39m
+[0] [33m[nodemon] watching path(s): *.*[39m
+[0] [33m[nodemon] watching extensions: ts,json[39m
+[0] [32m[nodemon] starting `ts-node src/app.ts`[39m
+[1] 
+[1]   VITE v4.5.14  ready in 309 ms
+[1] 
+[1]   ➜  Local:   http://localhost:5002/
+[1]   ➜  Network: use --host to expose
+[1] 
+[1] 🌼   daisyUI 4.12.24
+[0] Attempting to connect to MongoDB...
+[0] Connection string: mongodb+srv://lucasfroeschner:****@projectmanager.2veml9g.mongodb.net/project-manager?retryWrites=true&w=majority&appName=ProjectManager
+[1] ├─ ✔︎ 31 themes added		https://daisyui.com/docs/themes
+[1] ╰─ ❤︎ Support daisyUI project:	https://opencollective.com/daisyui
+[1] 
+[0] Server running on port 5003
+[1] (node:742547) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[1] (Use `node --trace-deprecation ...` to show where the warning was created)
+[0] Connected to MongoDB successfully!
+[1] Killed
+[1] npm run dev --prefix frontend exited with code 137
+[0] Killed
+[0] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+Starting Project Manager at Thu Jul 10 23:14:58 PDT 2025
+
+> project-manager@1.0.0 dev
+> concurrently "npm run dev --prefix backend" "npm run dev --prefix frontend"
+
+[0] 
+[0] > project-manager-backend@1.0.0 dev
+[0] > nodemon src/app.ts
+[0] 
+[1] 
+[1] > project-manager-frontend@1.0.0 dev
+[1] > vite
+[1] 
+[0] [33m[nodemon] 3.1.10[39m
+[0] [33m[nodemon] to restart at any time, enter `rs`[39m
+[0] [33m[nodemon] watching path(s): *.*[39m
+[0] [33m[nodemon] watching extensions: ts,json[39m
+[0] [32m[nodemon] starting `ts-node src/app.ts`[39m
+[1] 
+[1]   VITE v4.5.14  ready in 345 ms
+[1] 
+[1]   ➜  Local:   http://localhost:5002/
+[1]   ➜  Network: use --host to expose
+[0] Attempting to connect to MongoDB...
+[0] Connection string: mongodb+srv://lucasfroeschner:****@projectmanager.2veml9g.mongodb.net/project-manager?retryWrites=true&w=majority&appName=ProjectManager
+[0] Server running on port 5003
+[0] Connected to MongoDB successfully!
+[1] 
+[1] 🌼   daisyUI 4.12.24
+[1] ├─ ✔︎ 31 themes added		https://daisyui.com/docs/themes
+[1] ╰─ ❤︎ Support daisyUI project:	https://opencollective.com/daisyui
+[1] 
+[1] (node:755790) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[1] (Use `node --trace-deprecation ...` to show where the warning was created)
+Starting Project Manager at Fri Jul 11 09:30:38 PDT 2025
+
+> project-manager@1.0.0 dev
+> concurrently "npm run dev --prefix backend" "npm run dev --prefix frontend"
+
+[1] 
+[1] > project-manager-frontend@1.0.0 dev
+[1] > vite
+[1] 
+[0] 
+[0] > project-manager-backend@1.0.0 dev
+[0] > nodemon src/app.ts
+[0] 
+[0] [33m[nodemon] 3.1.10[39m
+[0] [33m[nodemon] to restart at any time, enter `rs`[39m
+[0] [33m[nodemon] watching path(s): *.*[39m
+[0] [33m[nodemon] watching extensions: ts,json[39m
+[0] [32m[nodemon] starting `ts-node src/app.ts`[39m
+[1] 
+[1]   VITE v4.5.14  ready in 341 ms
+[1] 
+[1]   ➜  Local:   http://localhost:5002/
+[1]   ➜  Network: use --host to expose
+[0] Attempting to connect to MongoDB...
+[0] Connection string: mongodb+srv://lucasfroeschner:****@projectmanager.2veml9g.mongodb.net/project-manager?retryWrites=true&w=majority&appName=ProjectManager
+[0] Server running on port 5003
+[0] Connected to MongoDB successfully!
+[1] 
+[1] 🌼   daisyUI 4.12.24
+[1] ├─ ✔︎ 31 themes added		https://daisyui.com/docs/themes
+[1] ╰─ ❤︎ Support daisyUI project:	https://opencollective.com/daisyui
+[1] 
+[1] (node:4945) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[1] (Use `node --trace-deprecation ...` to show where the warning was created)
+[1] 12:03:58 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:04:10 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:04:45 PM [vite] hmr update /src/pages/NotesPage.tsx, /src/index.css
+[1] 12:05:10 PM [vite] hmr update /src/pages/DocsPage.tsx, /src/index.css
+[1] 12:05:50 PM [vite] hmr update /src/pages/DocsPage.tsx, /src/index.css
+[1] 12:06:33 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 12:07:08 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 12:07:43 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 12:08:04 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:08:04 PM [vite] Internal server error: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx: Unterminated JSX contents. (782:10)
+[1] 
+[1]   780 |         </div>
+[1]   781 |       </div>
+[1] > 782 |     </div>
+[1]       |           ^
+[1]   783 |   );
+[1]   784 | };
+[1]   785 |
+[1]   Plugin: vite:react-babel
+[1]   File: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx:782:10
+[1]       at constructor (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:367:19)
+[1]       at TypeScriptParserMixin.raise (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+[1]       at TypeScriptParserMixin.jsxReadToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4478:20)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4804:12)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10004:11)
+[1]       at TypeScriptParserMixin.nextToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5810:10)
+[1]       at TypeScriptParserMixin.next (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5720:10)
+[1]       at TypeScriptParserMixin.eat (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5724:12)
+[1]       at TypeScriptParserMixin.expect (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6926:15)
+[1]       at TypeScriptParserMixin.jsxParseClosingElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4710:10)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4725:37)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:39
+[1]       at TypeScriptParserMixin.tryParse (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6935:20)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:18)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12427:12)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12494:17)
+[1]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11674:28)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+[1]       at TypeScriptParserMixin.parseExpressionBase (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10779:23)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+[1]       at TypeScriptParserMixin.parseExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:17)
+[1]       at TypeScriptParserMixin.parseReturnStatement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13142:28)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12798:21)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9527:18)
+[1]       at TypeScriptParserMixin.parseStatementLike (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12767:17)
+[1]       at TypeScriptParserMixin.parseStatementListItem (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12747:17)
+[1] 12:08:24 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:08:24 PM [vite] Internal server error: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx: Unterminated JSX contents. (783:10)
+[1] 
+[1]   781 |         </div>
+[1]   782 |       </div>
+[1] > 783 |     </div>
+[1]       |           ^
+[1]   784 |   );
+[1]   785 | };
+[1]   786 |
+[1]   Plugin: vite:react-babel
+[1]   File: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx:783:10
+[1]       at constructor (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:367:19)
+[1]       at TypeScriptParserMixin.raise (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+[1]       at TypeScriptParserMixin.jsxReadToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4478:20)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4804:12)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10004:11)
+[1]       at TypeScriptParserMixin.nextToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5810:10)
+[1]       at TypeScriptParserMixin.next (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5720:10)
+[1]       at TypeScriptParserMixin.eat (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5724:12)
+[1]       at TypeScriptParserMixin.expect (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6926:15)
+[1]       at TypeScriptParserMixin.jsxParseClosingElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4710:10)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4725:37)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:39
+[1]       at TypeScriptParserMixin.tryParse (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6935:20)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:18)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12427:12)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12494:17)
+[1]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11674:28)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+[1]       at TypeScriptParserMixin.parseExpressionBase (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10779:23)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+[1]       at TypeScriptParserMixin.parseExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:17)
+[1]       at TypeScriptParserMixin.parseReturnStatement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13142:28)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12798:21)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9527:18)
+[1]       at TypeScriptParserMixin.parseStatementLike (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12767:17)
+[1] 12:08:32 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:08:32 PM [vite] Internal server error: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx: Unterminated JSX contents. (784:10)
+[1] 
+[1]   782 |         </div>
+[1]   783 |       </div>
+[1] > 784 |     </div>
+[1]       |           ^
+[1]   785 |   );
+[1]   786 | };
+[1]   787 |
+[1]   Plugin: vite:react-babel
+[1]   File: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx:784:10
+[1]       at constructor (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:367:19)
+[1]       at TypeScriptParserMixin.raise (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+[1]       at TypeScriptParserMixin.jsxReadToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4478:20)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4804:12)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10004:11)
+[1]       at TypeScriptParserMixin.nextToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5810:10)
+[1]       at TypeScriptParserMixin.next (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5720:10)
+[1]       at TypeScriptParserMixin.eat (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5724:12)
+[1]       at TypeScriptParserMixin.expect (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6926:15)
+[1]       at TypeScriptParserMixin.jsxParseClosingElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4710:10)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4725:37)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:39
+[1]       at TypeScriptParserMixin.tryParse (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6935:20)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:18)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12427:12)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12494:17)
+[1]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11674:28)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+[1]       at TypeScriptParserMixin.parseExpressionBase (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10779:23)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+[1]       at TypeScriptParserMixin.parseExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:17)
+[1]       at TypeScriptParserMixin.parseReturnStatement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13142:28)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12798:21)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9527:18)
+[1] 12:08:40 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:08:40 PM [vite] Internal server error: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx: Unexpected token (26:60)
+[1] 
+[1]   24 |           <div className="pt-4">  const [isEditingBasic, setIsEditingBasic] = useState(false);
+[1]   25 |   const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+[1] > 26 |   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
+[1]      |                                                             ^
+[1]   27 |   
+[1]   28 |   // Form data
+[1]   29 |   const [name, setName] = useState('');
+[1]   Plugin: vite:react-babel
+[1]   File: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx:26:60
+[1]   26 |    const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
+[1]   27 |    
+[1]   28 |    // Form data
+[1]      |         ^
+[1]   29 |    const [name, setName] = useState('');
+[1]   30 |    const [description, setDescription] = useState('');
+[1]       at constructor (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:367:19)
+[1]       at TypeScriptParserMixin.raise (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+[1]       at TypeScriptParserMixin.unexpected (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6647:16)
+[1]       at TypeScriptParserMixin.jsxParseIdentifier (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4599:12)
+[1]       at TypeScriptParserMixin.jsxParseNamespacedName (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4606:23)
+[1]       at TypeScriptParserMixin.jsxParseAttribute (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4682:22)
+[1]       at TypeScriptParserMixin.jsxParseOpeningElementAfterName (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4697:28)
+[1]       at TypeScriptParserMixin.jsxParseOpeningElementAfterName (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10062:18)
+[1]       at TypeScriptParserMixin.jsxParseOpeningElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4692:17)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4716:33)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:39
+[1]       at TypeScriptParserMixin.tryParse (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6935:20)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:18)
+[1]       at TypeScriptParserMixin.parseExpressionBase (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10779:23)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+[1]       at TypeScriptParserMixin.parseExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:17)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12895:23)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9527:18)
+[1]       at TypeScriptParserMixin.parseStatementLike (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12767:17)
+[1]       at TypeScriptParserMixin.parseStatementListItem (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12747:17)
+[1]       at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13316:61)
+[1]       at TypeScriptParserMixin.parseBlockBody (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13309:10)
+[1]       at TypeScriptParserMixin.parseBlock (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13297:10)
+[1]       at TypeScriptParserMixin.parseFunctionBody (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12101:24)
+[1]       at TypeScriptParserMixin.parseArrowExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12076:10)
+[1]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11686:12)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1] 12:09:29 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:09:43 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:09:43 PM [vite] Internal server error: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (504:6)
+[1] 
+[1]   502 |           </div>
+[1]   503 |         </div>
+[1] > 504 |       </div>
+[1]       |       ^
+[1]   505 |
+[1]   506 |       {/* Project Links - Updated with editing */}
+[1]   507 |       <div className="collapse collapse-arrow bg-base-100 shadow-md">
+[1]   Plugin: vite:react-babel
+[1]   File: /home/lucas/projects/active/project-manager/frontend/src/pages/SettingsPage.tsx:504:6
+[1]   513|            <div className="mb-4">
+[1]   514|              <h4 className="font-medium mb-3">Add New Link</h4>
+[1]   515|              <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+[1]      |                                                             ^
+[1]   516|                <input
+[1]   517|                  type="text"
+[1]       at constructor (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:367:19)
+[1]       at TypeScriptParserMixin.raise (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4772:18)
+[1]       at TypeScriptParserMixin.jsxParseElement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:39
+[1]       at TypeScriptParserMixin.tryParse (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6935:20)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:18)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12427:12)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12494:17)
+[1]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11674:28)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+[1]       at TypeScriptParserMixin.parseExpressionBase (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10779:23)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+[1]       at TypeScriptParserMixin.parseExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:17)
+[1]       at TypeScriptParserMixin.parseReturnStatement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13142:28)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12798:21)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9527:18)
+[1]       at TypeScriptParserMixin.parseStatementLike (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12767:17)
+[1]       at TypeScriptParserMixin.parseStatementListItem (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12747:17)
+[1]       at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13316:61)
+[1]       at TypeScriptParserMixin.parseBlockBody (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13309:10)
+[1]       at TypeScriptParserMixin.parseBlock (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13297:10)
+[1]       at TypeScriptParserMixin.parseFunctionBody (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12101:24)
+[1]       at TypeScriptParserMixin.parseArrowExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12076:10)
+[1]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11686:12)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1] 12:09:51 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:09:58 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:10:05 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:10:19 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:12:29 PM [vite] hmr update /src/components/TodoItem.tsx, /src/index.css
+[1] 12:12:44 PM [vite] hmr update /src/components/DevLogItem.tsx, /src/index.css
+[1] 12:13:01 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 12:13:33 PM [vite] hmr update /src/pages/NotesPage.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/pages/NotesPage.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/pages/DocsPage.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/components/TodoItem.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/components/DevLogItem.tsx, /src/index.css
+[1] 12:13:55 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 12:14:41 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 12:16:05 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 12:16:38 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:16:46 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:16:50 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:16:57 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:17:16 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:19:44 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:20:21 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:20:30 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:21:34 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:21:51 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:22:07 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:22:44 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:23:02 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:23:17 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:24:13 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:24:23 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:24:32 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:24:42 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:24:59 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:25:25 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:26:13 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:42:50 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 12:49:20 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 12:55:23 PM [vite] hmr update /src/components/TodoItem.tsx, /src/index.css
+[1] 12:55:41 PM [vite] hmr update /src/components/TodoItem.tsx, /src/index.css
+[1] 12:56:21 PM [vite] hmr update /src/components/DevLogItem.tsx, /src/index.css
+[1] 12:56:35 PM [vite] hmr update /src/components/DevLogItem.tsx, /src/index.css
+[1] 12:56:53 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 1:17:01 PM [vite] hmr update /src/components/TodoItem.tsx, /src/index.css
+[1] 1:17:01 PM [vite] hmr update /src/components/DevLogItem.tsx, /src/index.css
+[1] 1:17:01 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 1:24:54 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 1:35:10 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 1:35:59 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 1:36:07 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 1:36:19 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 1:38:12 PM [vite] hmr update /src/components/NoteItem.tsx, /src/index.css
+[1] 1:38:12 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+[1] 2:34:01 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 2:34:01 PM [vite] Internal server error: /home/lucas/projects/active/project-manager/frontend/src/pages/RoadmapPage.tsx: Unterminated JSX contents. (369:10)
+[1] 
+[1]   367 |         </div>
+[1]   368 |       </div>
+[1] > 369 |     </div>
+[1]       |           ^
+[1]   370 |   );
+[1]   371 | };
+[1]   372 |
+[1]   Plugin: vite:react-babel
+[1]   File: /home/lucas/projects/active/project-manager/frontend/src/pages/RoadmapPage.tsx:369:10
+[1]       at constructor (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:367:19)
+[1]       at TypeScriptParserMixin.raise (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+[1]       at TypeScriptParserMixin.jsxReadToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4478:20)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4804:12)
+[1]       at TypeScriptParserMixin.getTokenFromCode (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10004:11)
+[1]       at TypeScriptParserMixin.nextToken (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5810:10)
+[1]       at TypeScriptParserMixin.next (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5720:10)
+[1]       at TypeScriptParserMixin.eat (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:5724:12)
+[1]       at TypeScriptParserMixin.expect (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6926:15)
+[1]       at TypeScriptParserMixin.jsxParseClosingElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4710:10)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4725:37)
+[1]       at TypeScriptParserMixin.jsxParseElementAt (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+[1]       at TypeScriptParserMixin.jsxParseElement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:39
+[1]       at TypeScriptParserMixin.tryParse (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:6935:20)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9790:18)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12427:12)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+[1]       at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12494:17)
+[1]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11674:28)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+[1]       at TypeScriptParserMixin.parseExprAtom (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+[1]       at TypeScriptParserMixin.parseExprSubscripts (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+[1]       at TypeScriptParserMixin.parseUpdate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+[1]       at TypeScriptParserMixin.parseMaybeUnary (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+[1]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+[1]       at TypeScriptParserMixin.parseExprOps (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+[1]       at TypeScriptParserMixin.parseMaybeConditional (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+[1]       at TypeScriptParserMixin.parseMaybeAssign (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+[1]       at TypeScriptParserMixin.parseExpressionBase (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10779:23)
+[1]       at /home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:39
+[1]       at TypeScriptParserMixin.allowInAnd (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+[1]       at TypeScriptParserMixin.parseExpression (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:10775:17)
+[1]       at TypeScriptParserMixin.parseReturnStatement (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:13142:28)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12798:21)
+[1]       at TypeScriptParserMixin.parseStatementContent (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:9527:18)
+[1]       at TypeScriptParserMixin.parseStatementLike (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12767:17)
+[1]       at TypeScriptParserMixin.parseStatementListItem (/home/lucas/projects/active/project-manager/frontend/node_modules/@babel/parser/lib/index.js:12747:17)
+[1] 2:34:18 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 2:35:02 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 2:36:32 PM [vite] hmr update /src/pages/DocsPage.tsx, /src/index.css
+[1] 2:49:48 PM [vite] hmr update /src/pages/DocsPage.tsx, /src/index.css
+[1] 2:49:48 PM [vite] hmr update /src/pages/RoadmapPage.tsx, /src/index.css
+[1] 3:23:22 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 3:25:09 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 3:25:19 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 3:25:31 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 3:25:37 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css
+[1] 3:25:43 PM [vite] hmr update /src/pages/SettingsPage.tsx, /src/index.css

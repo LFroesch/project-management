@@ -221,9 +221,9 @@ const SettingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-6 space-y-6">
       {error && (
-        <div className="alert alert-error">
+        <div className="alert alert-error shadow-md">
           <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -233,13 +233,13 @@ const SettingsPage: React.FC = () => {
       )}
 
       {/* Project Information */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" defaultChecked />
-        <div className="collapse-title text-xl font-medium">
-          📋 Project Information
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Project Information
         </div>
         <div className="collapse-content">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4 pt-4">
             <h3 className="text-lg font-semibold">Basic Info</h3>
             <div className="flex space-x-2">
               {isEditingBasic ? (

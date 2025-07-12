@@ -75,117 +75,137 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, projectId, onUpdate, onArchiv
   };
 
   return (
-    <div className={`card bg-base-100 shadow-md mb-4 ${todo.completed ? 'opacity-60' : ''}`}>
-      <div className="card-body p-4">
-        {isEditing ? (
-          <div className="space-y-3">
-            <input
-              type="text"
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              className="input input-bordered w-full"
-              placeholder="Todo title..."
-            />
-            <textarea
-              value={editDescription}
-              onChange={(e) => setEditDescription(e.target.value)}
-              className="textarea textarea-bordered w-full"
-              placeholder="Todo description..."
-              rows={3}
-            />
-            <div className="flex items-center gap-2">
-              <label className="label-text">Priority:</label>
-              <select
-                value={editPriority}
-                onChange={(e) => setEditPriority(e.target.value as 'low' | 'medium' | 'high')}
-                className="select select-bordered select-sm"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="btn btn-ghost btn-sm"
-                disabled={loading}
-              >
-                Cancel
-              </button>
+    <div className={`bg-base-100 border border-base-content/10 rounded-lg p-3 mb-3 ${todo.completed ? 'opacity-60' : ''}`}>
+      {isEditing ? (
+        <div className="space-y-3">
+          <div className="flex justify-between items-center mb-3">
+            <h4 className="font-medium text-sm text-base-content/70">Editing Todo</h4>
+            <div className="flex gap-2">
               <button
                 onClick={handleSave}
-                className="btn btn-primary btn-sm"
+                className="btn btn-xs btn-primary"
                 disabled={loading || !editTitle.trim()}
               >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
                 {loading ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="btn btn-xs btn-ghost"
+                disabled={loading}
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Cancel
               </button>
             </div>
           </div>
-        ) : (
-          <>
-            <div className="flex items-start gap-3">
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={handleToggleComplete}
-                className="checkbox checkbox-primary mt-1"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className={`font-medium ${todo.completed ? 'line-through text-base-content/60' : ''}`}>
-                    {todo.text}
-                  </h3>
-                  <div className={`badge badge-sm ${getPriorityColor(todo.priority || 'medium')}`}>
-                    {getPriorityIcon(todo.priority || 'medium')} {todo.priority || 'medium'}
-                  </div>
-                </div>
-                {todo.description && (
-                  <p className={`text-sm text-base-content/70 mb-2 ${todo.completed ? 'line-through' : ''}`}>
-                    {todo.description}
-                  </p>
-                )}
-                <div className="text-xs text-base-content/50">
-                  Created: {new Date(todo.createdAt).toLocaleDateString()}
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            className="input input-bordered input-sm w-full"
+            placeholder="Todo title..."
+          />
+          <textarea
+            value={editDescription}
+            onChange={(e) => setEditDescription(e.target.value)}
+            className="textarea textarea-bordered textarea-sm w-full"
+            placeholder="Todo description..."
+            rows={2}
+          />
+          <div className="flex items-center gap-2">
+            <label className="label-text text-sm">Priority:</label>
+            <select
+              value={editPriority}
+              onChange={(e) => setEditPriority(e.target.value as 'low' | 'medium' | 'high')}
+              className="select select-bordered select-xs"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => setIsEditing(false)}
+              className="btn btn-ghost btn-sm"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="btn btn-primary btn-sm"
+              disabled={loading || !editTitle.trim()}
+            >
+              {loading ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3 flex-1">
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={handleToggleComplete}
+              className="checkbox checkbox-primary checkbox-sm mt-0.5"
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className={`font-medium text-sm ${todo.completed ? 'line-through text-base-content/60' : ''}`}>
+                  {todo.text}
+                </h3>
+                <div className={`badge badge-xs ${getPriorityColor(todo.priority || 'medium')}`}>
+                  {getPriorityIcon(todo.priority || 'medium')} {todo.priority || 'medium'}
                 </div>
               </div>
-            </div>
-            
-            <div className="flex justify-end gap-2 mt-3">
-              {todo.completed && (
-                <button
-                  onClick={handleArchive}
-                  className="btn btn-sm btn-info"
-                  title="Archive to Dev Log"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8l6 6 6-6" />
-                  </svg>
-                  Archive
-                </button>
+              {todo.description && (
+                <p className={`text-xs text-base-content/70 mt-1 ${todo.completed ? 'line-through' : ''}`}>
+                  {todo.description}
+                </p>
               )}
-              <button
-                onClick={() => setIsEditing(true)}
-                className="btn btn-sm btn-ghost"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Edit
-              </button>
-              <button
-                onClick={handleDelete}
-                className="btn btn-sm btn-error btn-outline"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Delete
-              </button>
+              <div className="text-xs text-base-content/50 mt-1">
+                Created: {new Date(todo.createdAt).toLocaleDateString()}
+              </div>
             </div>
-          </>
-        )}
-      </div>
+          </div>
+          
+          <div className="flex gap-1 ml-2">
+            {todo.completed && (
+              <button
+                onClick={handleArchive}
+                className="btn btn-xs btn-info"
+                title="Archive to Dev Log"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8l6 6 6-6" />
+                </svg>
+              </button>
+            )}
+            <button
+              onClick={() => setIsEditing(true)}
+              className="btn btn-xs btn-ghost"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+            <button
+              onClick={handleDelete}
+              className="btn btn-xs btn-error btn-outline"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -224,40 +244,55 @@ const NewTodoForm: React.FC<NewTodoFormProps> = ({ projectId, onAdd }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card bg-base-100 shadow-md mb-4">
-      <div className="card-body p-4">
-        <h3 className="font-medium mb-3" style={{ fontSize: '20px' }}>Create New:</h3>
-        <div className="space-y-3">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="input input-bordered border-base-300 w-full"
-            style={{ fontSize: '18px' }}
-            placeholder="Todo title..."
-            required
-          />
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="textarea textarea-bordered border-base-300 w-full"
-            style={{ fontSize: '18px' }}
-            placeholder="Todo description (optional)..."
-            rows={3}
-            />  
-          <div className="flex items-center gap-2">
-            <label style={{ fontSize: '16px' }} className="label-text">Priority:</label>
+    <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10 mb-4">
+      <input type="checkbox" />
+      <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+        Create New Todo
+      </div>
+      <div className="collapse-content">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Todo Title</span>
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="input input-bordered border-base-300"
+              placeholder="Enter todo title..."
+              required
+            />
+          </div>
+          
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Description (Optional)</span>
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="textarea textarea-bordered border-base-300"
+              placeholder="Todo description..."
+              rows={3}
+            />
+          </div>
+          
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Priority</span>
+            </label>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
-              className="select select-bordered border-base-300 select-sm"
-              style={{ fontSize: '16px' }}
+              className="select select-bordered border-base-300"
             >
               <option value="low">🌱 Low</option>
               <option value="medium">⚡ Medium</option>
               <option value="high">🔥 High</option>
             </select>
           </div>
+          
           <div className="flex justify-end">
             <button
               type="submit"
@@ -267,9 +302,9 @@ const NewTodoForm: React.FC<NewTodoFormProps> = ({ projectId, onAdd }) => {
               {loading ? 'Adding...' : 'Add Todo'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 };
 

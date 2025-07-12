@@ -62,9 +62,9 @@ const NotesPage: React.FC = () => {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-6 space-y-6">
       {error && (
-        <div className="alert alert-error">
+        <div className="alert alert-error shadow-md">
           <svg className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -72,101 +72,107 @@ const NotesPage: React.FC = () => {
         </div>
       )}
 
-      {/* Notes Section - UPDATED: Now displays individual notes */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      {/* Notes Section */}
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" defaultChecked />
-        <div className="collapse-title text-xl font-medium">
-          📝 Notes ({selectedProject.notes?.length || 0})
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Notes ({selectedProject.notes?.length || 0})
         </div>
         <div className="collapse-content">
-          <NewNoteForm 
-            projectId={selectedProject.id} 
-            onAdd={onProjectRefresh}
-          />
-          
-          <div className="space-y-2">
-            {selectedProject.notes?.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-4">📄</div>
-                <p className="text-base-content/60">No notes yet. Add one above!</p>
-              </div>
-            ) : (
-              selectedProject.notes?.map((note) => (
-                <NoteItem
-                  key={note.id}
-                  note={note}
-                  projectId={selectedProject.id}
-                  onUpdate={onProjectRefresh}
-                  isExpanded={expandedNotes.has(note.id)}
-                  onToggleExpand={() => toggleNoteExpanded(note.id)}
-                />
-              ))
-            )}
+          <div className="pt-4">
+            <NewNoteForm 
+              projectId={selectedProject.id} 
+              onAdd={onProjectRefresh}
+            />
+            
+            <div className="space-y-3">
+              {selectedProject.notes?.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-4">📄</div>
+                  <p className="text-base-content/60">No notes yet. Create one above!</p>
+                </div>
+              ) : (
+                selectedProject.notes?.map((note) => (
+                  <NoteItem
+                    key={note.id}
+                    note={note}
+                    projectId={selectedProject.id}
+                    onUpdate={onProjectRefresh}
+                    isExpanded={expandedNotes.has(note.id)}
+                    onToggleExpand={() => toggleNoteExpanded(note.id)}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Todo List Section */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" defaultChecked />
-        <div className="collapse-title text-xl font-medium">
-          ✅ To Do ({selectedProject.todos?.length || 0})
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          To Do ({selectedProject.todos?.length || 0})
         </div>
         <div className="collapse-content">
-          <NewTodoForm 
-            projectId={selectedProject.id} 
-            onAdd={onProjectRefresh}
-          />
-          
-          <div className="space-y-2">
-            {selectedProject.todos?.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-4">📋</div>
-                <p className="text-base-content/60">No todos yet. Add one above!</p>
-              </div>
-            ) : (
-              selectedProject.todos?.map((todo) => (
-                <TodoItem
-                  key={todo.id}
-                  todo={todo}
-                  projectId={selectedProject.id}
-                  onUpdate={onProjectRefresh}
-                  onArchiveToDevLog={handleArchiveTodoToDevLog}
-                />
-              ))
-            )}
+          <div className="pt-4">
+            <NewTodoForm 
+              projectId={selectedProject.id} 
+              onAdd={onProjectRefresh}
+            />
+            
+            <div className="space-y-3">
+              {selectedProject.todos?.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-4">📋</div>
+                  <p className="text-base-content/60">No todos yet. Create one above!</p>
+                </div>
+              ) : (
+                selectedProject.todos?.map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    todo={todo}
+                    projectId={selectedProject.id}
+                    onUpdate={onProjectRefresh}
+                    onArchiveToDevLog={handleArchiveTodoToDevLog}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Dev Log Section */}
-      <div className="collapse collapse-arrow bg-base-100 shadow-md">
+      <div className="collapse collapse-arrow bg-base-100 shadow-lg border border-base-content/10">
         <input type="checkbox" />
-        <div className="collapse-title text-xl font-medium">
-          📚 Dev Log ({selectedProject.devLog?.length || 0})
+        <div className="collapse-title text-lg font-semibold bg-base-200 border-b border-base-content/10">
+          Dev Log ({selectedProject.devLog?.length || 0})
         </div>
         <div className="collapse-content">
-          <NewDevLogForm 
-            projectId={selectedProject.id} 
-            onAdd={onProjectRefresh}
-          />
-          
-          <div className="space-y-2">
-            {selectedProject.devLog?.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-4">📖</div>
-                <p className="text-base-content/60">No dev log entries yet. Add one above!</p>
-              </div>
-            ) : (
-              selectedProject.devLog?.map((entry) => (
-                <DevLogItem
-                  key={entry.id}
-                  entry={entry}
-                  projectId={selectedProject.id}
-                  onUpdate={onProjectRefresh}
-                />
-              ))
-            )}
+          <div className="pt-4">
+            <NewDevLogForm 
+              projectId={selectedProject.id} 
+              onAdd={onProjectRefresh}
+            />
+            
+            <div className="space-y-3">
+              {selectedProject.devLog?.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-4">📖</div>
+                  <p className="text-base-content/60">No dev log entries yet. Create one above!</p>
+                </div>
+              ) : (
+                selectedProject.devLog?.map((entry) => (
+                  <DevLogItem
+                    key={entry.id}
+                    entry={entry}
+                    projectId={selectedProject.id}
+                    onUpdate={onProjectRefresh}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
