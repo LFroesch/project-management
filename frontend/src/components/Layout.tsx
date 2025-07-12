@@ -9,6 +9,7 @@ const Layout: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentTheme, setCurrentTheme] = useState(() => {
     return localStorage.getItem('theme') || 'cyberpunk';
   });
@@ -35,6 +36,7 @@ const Layout: React.FC = () => {
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     localStorage.setItem('selectedProjectId', project.id);
+    setSearchTerm(''); // Clear search when selecting a project
   };
 
   // Toggle section collapse
@@ -176,17 +178,40 @@ const Layout: React.FC = () => {
 
   const currentTab = location.pathname.slice(1) || 'notes';
 
-  // Separate projects by archive status and sort alphabetically
-  const currentProjects = projects.filter(p => !p.isArchived).sort((a, b) => a.name.localeCompare(b.name));
-  const archivedProjects = projects.filter(p => p.isArchived).sort((a, b) => a.name.localeCompare(b.name));
-  const sharedProjects = projects.filter(p => p.isShared).sort((a, b) => a.name.localeCompare(b.name));
+  // Filter and separate projects by archive status and sort alphabetically
+  const filteredProjects = projects.filter(p => 
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+  
+  const currentProjects = filteredProjects.filter(p => !p.isArchived).sort((a, b) => a.name.localeCompare(b.name));
+  const archivedProjects = filteredProjects.filter(p => p.isArchived).sort((a, b) => a.name.localeCompare(b.name));
+  const sharedProjects = filteredProjects.filter(p => p.isShared).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">
       {/* Header */}
       <div className="bg-base-100 shadow-lg border-b border-base-content/10 p-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Project Manager</h1>
+          {/* Left section - Title and Project Controls */}
+          <div className="flex items-center gap-6">
+            <h1 className="text-2xl font-bold">Project Manager</h1>
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input input-bordered input-sm w-64 shadow-sm"
+              />
+              <button
+                onClick={() => navigate('/create-project')}
+                className="btn btn-primary btn-sm shadow-sm"
+              >
+                Create Project
+              </button>
+            </div>
+          </div>
           
           {/* Middle section - Links - REMOVE IF PROD?*/}
           <div className="flex items-center gap-3">
@@ -244,20 +269,6 @@ const Layout: React.FC = () => {
       <div className="flex flex-1">
         {/* Sidebar */}
         <div className="w-64 bg-base-100 shadow-lg border-r border-base-content/10 p-6">
-          {/* Search */}
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="Search projects..."
-              className="input input-bordered w-full shadow-sm"
-            />
-            <button
-              onClick={() => navigate('/create-project')}
-              className="btn btn-primary w-full mt-4 shadow-sm"
-            >
-              Create Project
-            </button>
-          </div>
           {/* Current Projects */}
           <div className="mb-6">
             <div 
