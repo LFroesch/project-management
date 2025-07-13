@@ -378,24 +378,34 @@ const NewNoteForm: React.FC<NewNoteFormProps> = ({ projectId, onAdd }) => {
           </div>
           
           <div className="form-control">
-            <label className="label">
-              <span className="label-text font-medium">Note Content</span>
-            </label>
-            <EnhancedTextEditor
-              value={content}
-              onChange={setContent}
-              placeholder="Enter your note content here... (Markdown supported)"
-            />
-          </div>
-          
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={loading || !title.trim() || !content.trim()}
-            >
-              {loading ? 'Adding...' : 'Add Note'}
-            </button>
+            <div className="flex justify-between items-center mb-2">
+              <label className="label">
+                <span className="label-text font-medium">Note Content</span>
+              </label>
+              <button
+                type="submit"
+                className="btn btn-primary btn-sm"
+                disabled={loading || !title.trim() || !content.trim()}
+              >
+                {loading ? 'Adding...' : 'Add Note'}
+              </button>
+            </div>
+            <div className="space-y-2">
+              <EnhancedTextEditor
+                value={content}
+                onChange={setContent}
+                placeholder="Enter your note content here... (Markdown supported)"
+              />
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  disabled={loading || !title.trim() || !content.trim()}
+                >
+                  {loading ? 'Adding...' : 'Add Note'}
+                </button>
+              </div>
+            </div>
           </div>
         </form>
       </div>

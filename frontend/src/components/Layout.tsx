@@ -214,7 +214,7 @@ const Layout: React.FC = () => {
           </div>
           
           {/* Middle section - Links - REMOVE IF PROD?*/}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center w-1/3 gap-3">
             <a 
               href="https://excalidraw.com/" 
               target="_blank" 
@@ -222,6 +222,14 @@ const Layout: React.FC = () => {
               className="btn btn-outline btn-sm shadow-sm border-base-content/20"
             >
               Excalidraw
+            </a>
+            <a 
+              href="http://localhost:5006" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn btn-outline btn-sm shadow-sm border-base-content/20"
+            >
+              FreshNotes
             </a>
             <a 
               href="http://localhost:5004/posts" 
