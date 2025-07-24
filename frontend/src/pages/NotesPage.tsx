@@ -92,16 +92,18 @@ const NotesPage: React.FC = () => {
                   <p className="text-base-content/60">No notes yet. Create one above!</p>
                 </div>
               ) : (
-                selectedProject.notes?.map((note) => (
-                  <NoteItem
-                    key={note.id}
-                    note={note}
-                    projectId={selectedProject.id}
-                    onUpdate={onProjectRefresh}
-                    isExpanded={expandedNotes.has(note.id)}
-                    onToggleExpand={() => toggleNoteExpanded(note.id)}
-                  />
-                ))
+                selectedProject.notes
+                  ?.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+                  ?.map((note) => (
+                    <NoteItem
+                      key={note.id}
+                      note={note}
+                      projectId={selectedProject.id}
+                      onUpdate={onProjectRefresh}
+                      isExpanded={expandedNotes.has(note.id)}
+                      onToggleExpand={() => toggleNoteExpanded(note.id)}
+                    />
+                  ))
               )}
             </div>
           </div>

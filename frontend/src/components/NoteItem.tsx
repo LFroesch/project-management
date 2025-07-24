@@ -171,9 +171,11 @@ const NoteItem: React.FC<NoteItemProps> = ({
                 <p className="text-sm text-base-content/70">{note.description}</p>
               )}
               <div className="text-xs text-base-content/50 mt-1">
-                Created: {new Date(note.createdAt).toLocaleDateString()}
                 {note.updatedAt !== note.createdAt && (
-                  <> • Updated: {new Date(note.updatedAt).toLocaleDateString()}</>
+                  <>Updated: {new Date(note.updatedAt).toLocaleDateString()} • </>
+                )}
+                {note.createdAt && (
+                  <>Created: {new Date(note.createdAt).toLocaleDateString()}</>
                 )}
               </div>
             </div>
